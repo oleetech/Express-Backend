@@ -2,6 +2,7 @@
 // Express এবং body-parser প্যাকেজ ইম্পোর্ট করা
 const express = require('express');
 const bodyParser = require('body-parser');
+const authRoutes = require('./routes/authRoutes');
 require('dotenv').config();
 
 // TypeORM DataSource ইম্পোর্ট করা
@@ -16,6 +17,9 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
+
+// Routes সেটআপ
+app.use('/auth', authRoutes);
 
 // PORT সেটআপ
 const port = process.env.PORT || 3000; // যদি env থেকে PORT না পাওয়া যায়, তবে 3000 ব্যবহার হবে

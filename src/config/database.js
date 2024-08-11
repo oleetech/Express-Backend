@@ -1,7 +1,11 @@
 require('reflect-metadata');
-require('dotenv').config(); // Ensure dotenv is loaded before accessing process.env
+require('dotenv').config(); // Load environment variables
 
 const { DataSource } = require('typeorm');
+const path = require('path');
+
+// Import your entities here
+const User = require('../entities/User'); // Adjust the path as needed
 
 // Determine the database type from environment variables
 const dbType = process.env.DB_TYPE || 'mysql';
@@ -10,8 +14,10 @@ const dbType = process.env.DB_TYPE || 'mysql';
 const commonConfig = {
     synchronize: process.env.DB_SYNCHRONIZE === 'true',
     logging: process.env.DB_LOGGING === 'true',
-    entities: [], // Add your entities here or load from a specific file
-    migrations: [], // Add your migrations here or load from a specific file
+    entities: [User], // Add your entities here
+    migrations: [
+        path.join(__dirname, 'migrations/*.js'), // Path to your migration files
+    ],
     subscribers: [], // Add your subscribers here or load from a specific file
 };
 
@@ -30,6 +36,7 @@ const dbConfig = dbType === 'mongodb' ? {
     database: process.env.DB_DATABASE || 'passportjs_example',
 };
 
+// Initialize Data Source with merged configurations
 const AppDataSource = new DataSource({
     ...commonConfig,
     ...dbConfig,
