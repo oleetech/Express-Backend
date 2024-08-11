@@ -3,6 +3,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+
+// TypeORM DataSource ইম্পোর্ট করা
+const AppDataSource = require('./config/database'); // আপনার database ফাইলের পাথ দিন
+
 const app = express();
 
 // Middleware সেটআপ
@@ -16,7 +20,17 @@ app.get('/', (req, res) => {
 // PORT সেটআপ
 const port = process.env.PORT || 3000; // যদি env থেকে PORT না পাওয়া যায়, তবে 3000 ব্যবহার হবে
 
+// Server চালু করুন
 app.listen(port, () => {
-    console.log("PORT:", port); // ব্যবহার করা PORT দেখাবে
-    console.log("Application started"); // অ্যাপ্লিকেশন শুরু হওয়ার বার্তা
+    console.log(`Server is running on port ${port}`);
+
+    // Database connection চেষ্টা করুন
+    AppDataSource.initialize()
+        .then(() => {
+            console.log('Database connected successfully!');
+        })
+        .catch((err) => {
+            console.error('Error during database connection:', err);
+            console.log('Server is running without a database connection.');
+        });
 });
