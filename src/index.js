@@ -3,6 +3,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
+const authenticateJWT = require('./middlewares/authenticateJWT');
+
 require('dotenv').config();
 
 // TypeORM DataSource ইম্পোর্ট করা

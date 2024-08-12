@@ -2,103 +2,106 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const AppDataSource = require('../config/database');
 const User = require('../entities/User');
-const sendEmail = require('../utils/sendEmail');
-const generateOtp = require('../utils/generateOtp');
-const sendSms = require('../utils/sendSms');
+const {
+    checkIfUserExists, 
+    hashPassword, 
+    createNewUser, 
+    saveUser, 
+    handlePhoneRegistration, 
+    handleEmailRegistration, 
+    generateToken, 
+    phoneLogin, 
+    emailLogin, 
+    usernameLogin,
+    verifyToken,
+    findUserById,
+    activateUserAccount
+} = require('./authHelpers');
 
-
+// Register a new user
 const register = async (req, res) => {
     const { username, email, password, phone } = req.body;
     const userRepository = AppDataSource.getRepository(User);
 
     try {
         // Check if user already exists
-        const existingUser = await userRepository.findOne({ where: [{ username }, { email }, { phone }] });
+        const existingUser = await checkIfUserExists(userRepository, username, email, phone);
         if (existingUser) {
             return res.status(400).json({ message: 'ব্যবহারকারী ইতোমধ্যে নিবন্ধিত' });
         }
 
         // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hashPassword(password);
 
-        // Create a new user instance using the repository's create method
-        const newUser = userRepository.create({
-            username,
-            email,
-            password: hashedPassword,
-            phone,
-            isActivated: false,
-        });
+        // Create a new user instance
+        const newUser = createNewUser(userRepository, username, email, hashedPassword, phone);
 
         // Save the new user
-        await userRepository.save(newUser);
+        await saveUser(userRepository, newUser);
 
+        let response;
         if (email) {
-            // Handle email verification
-            if (process.env.EMAIL_VERIFICATION_ENABLED === 'true') {
-                if (process.env.OTP_VERIFICATION_ENABLED === 'true') {
-                    // Send OTP to email
-                    const otp = generateOtp();
-                    newUser.otp = otp;
-                    await userRepository.save(newUser);
-
-                    try {
-                        await sendEmail({
-                            to: newUser.email,
-                            subject: 'OTP for Registration',
-                            text: `Your OTP is ${otp}. Use this code to complete your registration.`,
-                        });
-                        return res.status(201).json({ message: 'ব্যবহারকারী সফলভাবে নিবন্ধিত। OTP পাঠানো হয়েছে, দয়া করে যাচাই করুন।' });
-                    } catch (emailError) {
-                        return res.status(500).json({ message: 'ব্যবহারকারী নিবন্ধিত হয়েছে, কিন্তু ইমেল পাঠাতে ব্যর্থ হয়েছে।', error: emailError.message });
-                    }
-                } 
-
-                else {
-                    // Send activation email
-                    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-                    const activationLink = `${process.env.EMAIL_VERIFY_ACTIVATION_LINK}/${token}`;
-
-                    try {
-                        await sendEmail({
-                            to: newUser.email,
-                            subject: 'Account Activation',
-                            text: `Please click the following link to activate your account: ${activationLink}`,
-                        });
-                        return res.status(201).json({ message: 'ব্যবহারকারী সফলভাবে নিবন্ধিত। অ্যাকাউন্ট সক্রিয়করণের জন্য ইমেল পাঠানো হয়েছে।' });
-                    } catch (emailError) {
-                        return res.status(500).json({ message: 'ব্যবহারকারী নিবন্ধিত হয়েছে, কিন্তু অ্যাকাউন্ট সক্রিয়করণ ইমেল পাঠাতে ব্যর্থ হয়েছে।', error: emailError.message });
-                    }
-                }
-            } else {
-                // Default activation
-                newUser.isActivated = true;
-                await userRepository.save(newUser);
-            }
+            response = await handleEmailRegistration(userRepository, newUser);
+        } else if (phone) {
+            response = await handlePhoneRegistration(userRepository, newUser, phone);
+        } else {
+            // Default activation
+            newUser.isActivated = true;
+            await saveUser(userRepository, newUser);
+            response = { success: true, message: 'ব্যবহারকারী সফলভাবে নিবন্ধিত। প্রয়োজনীয় যাচাই সম্পন্ন করুন।' };
         }
 
-        
-
-        res.status(201).json({ message: 'ব্যবহারকারী সফলভাবে নিবন্ধিত। প্রয়োজনীয় যাচাই সম্পন্ন করুন।' });
+        if (response.success) {
+            return res.status(201).json({ message: response.message });
+        } else {
+            return res.status(500).json({ message: response.message, error: response.error });
+        }
     } catch (err) {
-        res.status(500).json({ message: 'ব্যবহারকারী নিবন্ধন করতে ত্রুটি', error: err.message });
+        return res.status(500).json({ message: 'ব্যবহারকারী নিবন্ধন করতে ত্রুটি', error: err.message });
+    }
+};
+
+
+
+
+
+
+
+// Login
+const login = async (req, res) => {
+    const { identifier, password } = req.body;
+
+    try {
+        const userRepository = AppDataSource.getRepository(User);
+
+        // Regular expressions for phone and email validation
+        const phoneRegex = /^\+?\d{10,15}$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (phoneRegex.test(identifier)) {
+            await phoneLogin(identifier, userRepository, res);
+        } else if (emailRegex.test(identifier)) {
+            await emailLogin(identifier, password, userRepository, res);
+        } else {
+            await usernameLogin(identifier, password, userRepository, res);
+        }
+    } catch (err) {
+        console.error("Error logging in user:", err);
+        res.status(500).send('Error logging in user.');
     }
 };
 
 const activateAccount = async (req, res) => {
     const { token } = req.params;
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userRepository = AppDataSource.getRepository(User);
+        const decoded = await verifyToken(token);
+        const user = await findUserById(decoded.id);
 
-        let user = await userRepository.findOne({ where: { id: decoded.id } });
         if (!user) {
             return res.status(400).json({ message: 'Invalid activation link' });
         }
 
-        user.isActivated = true;
-        await userRepository.save(user);
-
+        await activateUserAccount(user);
         res.status(200).json({ message: 'Account activated successfully' });
     } catch (err) {
         res.status(400).json({ message: 'Invalid or expired activation link', error: err.message });
@@ -106,8 +109,9 @@ const activateAccount = async (req, res) => {
 };
 
 
-
-
-module.exports = { register,activateAccount };
-
-
+// Export the functions
+module.exports = {
+    register,
+    activateAccount,
+    login
+};
