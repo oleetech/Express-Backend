@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const AppDataSource = require('../config/database');
 const User = require('../entities/User');
+const passport = require('passport');
 const {
     checkIfUserExists, 
     hashPassword, 
@@ -15,7 +16,8 @@ const {
     usernameLogin,
     verifyToken,
     findUserById,
-    activateUserAccount
+    activateUserAccount,
+    handleGoogleCallback 
 } = require('./authHelpers');
 
 // Register a new user
@@ -108,10 +110,39 @@ const activateAccount = async (req, res) => {
     }
 };
 
+// Initiate Google OAuth Login
+const googleLogin = (req, res, next) => {
+    passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+};
+
+
+// Handle Google OAuth Callback
+const googleCallback = (req, res, next) => {
+    passport.authenticate('google', { session: false }, async (err, user, info) => {
+        if (err) {
+            console.error("Error during authentication:", err);
+            return res.status(400).json({ message: 'Login failed', error: err.message });
+        }
+
+        if (!user) {
+            console.error("No user found:", info);
+            return res.status(400).json({ message: 'Login failed', error: info || 'No user found' });
+        }
+
+        // Log the user information
+        console.log("Authenticated user:", user);
+
+        // Use the handleGoogleCallback method to manage token generation and response
+        await handleGoogleCallback(user, res);
+    })(req, res, next);
+};
+
 
 // Export the functions
 module.exports = {
     register,
     activateAccount,
-    login
+    login,
+    googleLogin,
+    googleCallback
 };

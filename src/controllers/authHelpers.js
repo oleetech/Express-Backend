@@ -93,11 +93,12 @@ const handleEmailRegistration = async (userRepository, newUser) => {
 
 // Generate JWT Token
 const generateToken = (user) => {
-    return jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: '1h',
-    });
+    return jwt.sign(
+        { id: user.id, email: user.email }, // Payload
+        process.env.JWT_SECRET, // Secret key
+        { expiresIn: '1h' } // Options
+    );
 };
-
 
 
 // Phone Login Logic
@@ -198,6 +199,25 @@ const activateUserAccount = async (user) => {
     return await userRepository.save(user);
 };
 
+
+// Handle Google OAuth Callback and Generate JWT
+const handleGoogleCallback = async (user, res) => {
+    try {
+        // Generate JWT Token using your generateToken method
+        const token = generateToken(user);
+
+        // Return the token and user information
+        return res.json({
+            message: 'Login successful',
+            token,
+            user
+        });
+    } catch (err) {
+        console.error("Error during Google OAuth callback:", err);
+        return res.status(500).json({ message: 'Error during login', error: err.message });
+    }
+};
+
 module.exports = {
     checkIfUserExists,
     hashPassword,
@@ -211,5 +231,6 @@ module.exports = {
     usernameLogin,
     verifyToken,
     findUserById,
-    activateUserAccount
+    activateUserAccount,
+    handleGoogleCallback
 };
