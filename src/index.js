@@ -20,8 +20,27 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-// Routes setup
+// Auth Routes setup
 app.use('/auth', authRoutes);
+
+// Upload middleware setup
+const upload = require('./middlewares/uploadMiddleware');
+// Route: Single file upload
+app.post('/upload-single', upload.single('singleFile'), (req, res) => {
+    res.status(200).json({
+      message: 'File uploaded successfully!',
+      file: req.file,
+    });
+  });
+
+// Use the category routes
+const categoryRoutes = require('./routes/categoryRoutes'); // Import the category routes
+app.use('/api', categoryRoutes); // Add the category routes with a base path of /api
+
+// Use the sub category routes
+const subCategoryRoutes = require('./routes/subCategoryRoutes');
+app.use('/api', subCategoryRoutes); 
+
 
 // PORT setup
 const port = process.env.PORT || 3000; 

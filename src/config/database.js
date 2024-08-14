@@ -5,7 +5,10 @@ const { DataSource } = require('typeorm');
 const path = require('path');
 
 // Import your entities here
-const User = require('../entities/User'); // Adjust the path as needed
+const User = require('../entities/User'); 
+const Product = require('../entities/Product');
+const Category = require('../entities/Category');
+const SubCategory = require('../entities/SubCategory');
 
 // Determine the database type from environment variables
 const dbType = process.env.DB_TYPE || 'mysql';
@@ -14,7 +17,7 @@ const dbType = process.env.DB_TYPE || 'mysql';
 const commonConfig = {
     synchronize: process.env.DB_SYNCHRONIZE === 'true',
     logging: process.env.DB_LOGGING === 'true',
-    entities: [User], // Add your entities here
+    entities: [User, Product, Category, SubCategory], // Add your entities here
     migrations: [
         path.join(__dirname, 'migrations/*.js'), // Path to your migration files
     ],
