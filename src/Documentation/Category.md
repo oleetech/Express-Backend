@@ -52,16 +52,10 @@
 - `Authorization`: (optional) `Bearer <token>` (if authentication is required)
 
 ## Request Body
+
 ```json
 {
-    "name": "string",
-    "specification": "string",
-    "weight": "string",
-    "description": "string",
-    "color": "string",
-    "price": "string",
-    "category": "string",
-    "sub_category": "string"
+    "name": "Electronics"
 }
 ```
 
@@ -95,16 +89,10 @@
 | `id`       | string | The ID of the category to update.             |
 
 ## Request Body
+
 ```json
 {
-    "name": "string",
-    "specification": "string",
-    "weight": "string",
-    "description": "string",
-    "color": "string",
-    "price": "string",
-    "category": "string",
-    "sub_category": "string"
+    "name": "Updated Electronics"
 }
 
 ```
