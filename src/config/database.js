@@ -6,7 +6,6 @@ const path = require('path');
 
 // Import your entities here
 const User = require('../entities/User'); 
-const Product = require('../entities/Product');
 const Category = require('../entities/Category');
 const SubCategory = require('../entities/SubCategory');
 
@@ -17,7 +16,7 @@ const dbType = process.env.DB_TYPE || 'mysql';
 const commonConfig = {
     synchronize: process.env.DB_SYNCHRONIZE === 'true',
     logging: process.env.DB_LOGGING === 'true',
-    entities: [User, Product, Category, SubCategory], // Add your entities here
+    entities: [User, Category, SubCategory], // Add your entities here
     migrations: [
         path.join(__dirname, 'migrations/*.js'), // Path to your migration files
     ],

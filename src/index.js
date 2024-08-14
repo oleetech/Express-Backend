@@ -44,9 +44,7 @@ app.use('/api', categoryRoutes); // Add the category routes with a base path of 
 const subCategoryRoutes = require('./routes/subCategoryRoutes');
 app.use('/api', subCategoryRoutes); 
 
-// Use the products routes
-const productRoutes = require('./routes/productRoutes');
-app.use('/api/', productRoutes);
+
 
 
 // PORT setup
