@@ -54,9 +54,8 @@
 ```json
 {
     "name": "string",
-    "category": "string"
+    "category": "integer"
 }
-
 ```
 
 # Update Subcategory
@@ -80,7 +79,7 @@
 ```json
 {
     "name": "string",
-    "category": "string"
+     "category": "integer"
 }
 ```
 
