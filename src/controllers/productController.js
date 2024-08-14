@@ -30,7 +30,7 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
     try {
         const { name, specification, weight, description, color, price, category, sub_category } = req.body;
-        const image = req.file ? req.file.path : null; // Path to the uploaded image
+        const imageUrl = req.file ? req.file.path : null; // Path to the uploaded image
 
         const newProduct = await AppDataSource.getRepository(Product).save({
             name,
@@ -41,7 +41,7 @@ const createProduct = async (req, res) => {
             price,
             category,
             sub_category,
-            image
+            imageUrl
         });
 
         res.status(201).json(newProduct);
@@ -55,7 +55,7 @@ const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, specification, weight, description, color, price, category, sub_category } = req.body;
-        const image = req.file ? req.file.path : null;
+        const imageUrl = req.file ? req.file.path : null;
 
         const result = await AppDataSource.getRepository(Product).update(id, {
             name,
@@ -66,7 +66,7 @@ const updateProduct = async (req, res) => {
             price,
             category,
             sub_category,
-            image
+            imageUrl
         });
 
         if (result.affected === 0) {
