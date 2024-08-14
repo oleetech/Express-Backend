@@ -88,16 +88,18 @@
 
 ```json
 {
-    "name": "Sample Product",
-    "specification": "Detailed specs here",
-    "weight": "500g",
-    "description": "This is a sample product description.",
-    "color": "Red",
-    "price": "19.99",
-    "category": "Electronics",
-    "sub_category": "Mobile Phones",
-    "image": "sample-product.jpg"
+  "id": 1,
+  "name": "Sample Product",
+  "specification": "Product specification",
+  "weight": "1kg",
+  "description": "Product description",
+  "color": "Red",
+  "price": 99.99,
+  "category": 1,
+  "subcategory": 2,
+  "image": "uploads/sample.jpg"
 }
+
 ```
 # Get Product By ID
 
@@ -184,8 +186,8 @@
     "description": "Updated product description",
     "color": "Blue",
     "price": "29.99",
-    "category": "Electronics",
-    "sub_category": "Laptops",
+    "category": 1,
+    "subcategory": 2,
     "image": "/uploads/new-image.jpg"
 }
 ```
