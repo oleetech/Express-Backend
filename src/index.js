@@ -10,10 +10,13 @@ require('dotenv').config();
 const AppDataSource = require('./config/database'); // Your database configuration file
 
 const app = express();
+const path = require('path');
 
 // Middleware setup
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+// Serve static files (e.g., images) from 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Test route
 app.get('/', (req, res) => {
@@ -40,6 +43,10 @@ app.use('/api', categoryRoutes); // Add the category routes with a base path of 
 // Use the sub category routes
 const subCategoryRoutes = require('./routes/subCategoryRoutes');
 app.use('/api', subCategoryRoutes); 
+
+// Use the products routes
+const productRoutes = require('./routes/productRoutes');
+app.use('/api/', productRoutes);
 
 
 // PORT setup
