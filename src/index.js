@@ -5,12 +5,17 @@ const authenticateJWT = require('./middlewares/authenticateJWT');
 require('./middlewares/passport-setup'); 
 
 require('dotenv').config();
+const cors = require('cors'); // Import the cors package
 
 // TypeORM DataSource import
 const AppDataSource = require('./config/database'); // Your database configuration file
 
 const app = express();
 const path = require('path');
+
+// Use CORS middleware
+app.use(cors());
+
 
 // Middleware setup
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -47,6 +52,7 @@ app.use('/api', subCategoryRoutes);
 // Use the products routes
 const productRoutes = require('./routes/productRoutes');
 app.use('/api/', productRoutes);
+
 
 
 // PORT setup

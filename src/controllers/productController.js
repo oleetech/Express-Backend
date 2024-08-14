@@ -92,42 +92,28 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-// Search products with query parameters
+// Search products by color
 const searchProducts = async (req, res) => {
     try {
-        const { name, category, minPrice, maxPrice, color, weight } = req.query;
+        const color = req.query.color; // Get the color from query params
 
-        // Create a query builder instance
-        const query = AppDataSource.getRepository(Product).createQueryBuilder('product');
-        
-        // Add conditions based on query parameters
-        if (name) {
-            query.andWhere('product.name LIKE :name', { name: `%${name}%` });
+        if (!color) {
+            return res.status(400).json({ message: 'Color query parameter is required' });
         }
-        if (category) {
-            query.andWhere('product.categoryId = :category', { category });
+
+        const products = await AppDataSource.getRepository(Product).find({
+            where: { color: color }
+        });
+
+        if (products.length === 0) {
+            return res.status(404).json({ message: 'Product not found' });
         }
-        if (minPrice) {
-            query.andWhere('product.price >= :minPrice', { minPrice });
-        }
-        if (maxPrice) {
-            query.andWhere('product.price <= :maxPrice', { maxPrice });
-        }
-        if (color) {
-            query.andWhere('product.color LIKE :color', { color: `%${color}%` });
-        }
-        if (weight) {
-            query.andWhere('product.weight LIKE :weight', { weight: `%${weight}%` });
-        }
-        
-        // Execute the query and get the results
-        const products = await query.getMany();
+
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: 'Failed to search products', error });
     }
 };
-
 
 module.exports = {
     getAllProducts,
