@@ -58,6 +58,21 @@
 }
 ```
 
+### **200 OK**
+- **Description**: Returns the created subcategory object.
+- **Example Response**:
+
+```json
+{
+    "id": 1,
+    "name": "New Subcategory Name",
+    "category_id": 1, // ID of the associated category
+    "parent_category": "Existing Category Name", // Name of the associated category
+    "createdAt": "2024-08-18T12:00:00Z",
+    "updatedAt": "2024-08-18T12:00:00Z"
+}
+```
+
 # Update Subcategory
 
 **Endpoint**: `PUT /api/subcategories/:id`
@@ -90,10 +105,14 @@
 - **Example Response**:
 ```json
 {
-    "id": "1",
+    "id": 1,
     "name": "Updated Subcategory Name",
-    "category": "Category Name"
+    "category_id": 2, // ID of the updated category
+    "parent_category": "New Category Name", // Name of the updated category
+    "createdAt": "2024-08-18T12:00:00Z",
+    "updatedAt": "2024-08-18T12:30:00Z"
 }
+
 ```
 
 # Delete Subcategory
