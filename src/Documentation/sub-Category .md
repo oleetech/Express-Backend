@@ -54,7 +54,7 @@
 ```json
 {
     "name": "string",
-    "category": "integer"
+    "category_id": "integer"
 }
 ```
 
@@ -79,7 +79,7 @@
 ```json
 {
     "name": "string",
-     "category": "integer"
+    "category_id": "integer"
 }
 ```
 
