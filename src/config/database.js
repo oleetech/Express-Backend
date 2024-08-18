@@ -25,19 +25,33 @@ const commonConfig = {
 };
 
 // Conditional configuration based on DB type
-const dbConfig = dbType === 'mongodb' ? {
-    type: 'mongodb',
-    url: `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`, // MongoDB connection string
-    useNewUrlParser: true, // MongoDB-specific options
-    useUnifiedTopology: true, // MongoDB-specific options
-} : {
-    type: dbType,
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT, 10) || 3306,
-    username: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_DATABASE || 'passportjs_example',
-};
+let dbConfig;
+
+if (dbType === 'sqlite') {
+    // SQLite configuration
+    dbConfig = {
+        type: 'sqlite',
+        database: process.env.DB_DATABASE || './database.sqlite', // SQLite database file path
+    };
+} else if (dbType === 'mongodb') {
+    // MongoDB configuration
+    dbConfig = {
+        type: 'mongodb',
+        url: `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`, // MongoDB connection string
+        useNewUrlParser: true, // MongoDB-specific options
+        useUnifiedTopology: true, // MongoDB-specific options
+    };
+} else {
+    // MySQL or other SQL-based databases configuration
+    dbConfig = {
+        type: dbType,
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT, 10) || 3306,
+        username: process.env.DB_USERNAME || 'root',
+        password: process.env.DB_PASSWORD || '',
+        database: process.env.DB_DATABASE || 'passportjs_example',
+    };
+}
 
 // Initialize Data Source with merged configurations
 const AppDataSource = new DataSource({

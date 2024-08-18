@@ -31,38 +31,54 @@ const getSubCategoryById = async (req, res) => {
 // Create a new subcategory
 const createSubCategory = async (req, res) => {
     try {
-        const newSubCategory = await AppDataSource.getRepository(SubCategory).save(req.body);
-        res.status(201).json(newSubCategory);
+        const subCategoryRepository = AppDataSource.getRepository(SubCategory);
+        const newSubCategory = subCategoryRepository.create(req.body);
+        const savedSubCategory = await subCategoryRepository.save(newSubCategory); // Save and return the saved subcategory
+        res.status(201).json(savedSubCategory); // Return the created subcategory as response
     } catch (error) {
         res.status(500).json({ message: 'Failed to create subcategory', error });
     }
 };
 
+
 // Update a subcategory by ID
 const updateSubCategory = async (req, res) => {
     try {
-        const result = await AppDataSource.getRepository(SubCategory).update(req.params.id, req.body);
-        if (result.affected === 0) {
+        const subCategoryRepository = AppDataSource.getRepository(SubCategory);
+        const subCategory = await subCategoryRepository.findOneBy({ id: req.params.id });
+
+        if (!subCategory) {
             return res.status(404).json({ message: 'Subcategory not found' });
         }
-        res.status(200).json({ message: 'Subcategory updated successfully' });
+
+        subCategoryRepository.merge(subCategory, req.body); // Merge the new data with the existing one
+        const updatedSubCategory = await subCategoryRepository.save(subCategory); // Save and return the updated subcategory
+
+        res.status(200).json(updatedSubCategory); // Return the updated subcategory as response
     } catch (error) {
         res.status(500).json({ message: 'Failed to update subcategory', error });
     }
 };
 
-// Delete a subcategory by ID
+
+// Delete a subcategory by ID and return the deleted data
 const deleteSubCategory = async (req, res) => {
     try {
-        const result = await AppDataSource.getRepository(SubCategory).delete(req.params.id);
-        if (result.affected === 0) {
-            return res.status(404).json({ message: 'Subcategory not found' });
+        const subCategoryRepository = AppDataSource.getRepository(SubCategory);
+        const subCategory = await subCategoryRepository.findOneBy({ id: req.params.id });
+
+        if (!subCategory) {
+            return res.status(404).json({ error: 'Subcategory not found' });
         }
-        res.status(200).json({ message: 'Subcategory deleted successfully' });
+
+        await subCategoryRepository.remove(subCategory); // Remove the subcategory
+        res.status(200).json(subCategory); // Return the deleted subcategory
     } catch (error) {
-        res.status(500).json({ message: 'Failed to delete subcategory', error });
+        res.status(500).json({ error: 'Failed to delete subcategory', details: error });
     }
 };
+
+
 
 module.exports = {
     getAllSubCategories,
