@@ -54,6 +54,10 @@ const productRoutes = require('./routes/productRoutes');
 app.use('/api/', productRoutes);
 
 
+const contactRoutes = require('./routes/contactRoutes'); // Adjust the path if necessary
+app.use('/api', contactRoutes); // Use the contact routes
+
+
 
 // PORT setup
 const port = process.env.PORT || 3000; 

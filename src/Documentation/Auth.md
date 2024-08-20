@@ -17,6 +17,15 @@
 | `password` | string | The password for the user's account.     |
 | `phone`    | string | (optional) The phone number of the user. |
 
+```json
+{
+  "username": "john_doe",
+  "email": "john.doe@example.com",
+  "password": "securePassword123",
+  "phone": "+1234567890"
+}
+```
+
 ## Responses
 - **201 Created**: If the user is successfully registered.
   - Body: `{ "message": "ব্যবহারকারী সফলভাবে নিবন্ধিত। প্রয়োজনীয় যাচাই সম্পন্ন করুন।" }`

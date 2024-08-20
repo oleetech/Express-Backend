@@ -20,6 +20,9 @@ const {
     handleGoogleCallback 
 } = require('./authHelpers');
 
+
+
+
 /**
  * নতুন ব্যবহারকারী নিবন্ধন করার জন্য এই ফাংশনটি ব্যবহৃত হয়।
  * @function register
@@ -86,46 +89,79 @@ const register = async (req, res) => {
 
 
 
-// Login
+
+/**
+ * @function login
+ * @description ব্যবহারকারী লগইন পরিচালনার জন্য ফাংশনটি ব্যবহৃত হয়। ব্যবহারকারী ইনপুট হিসাবে identifier (যা হতে পারে ইউজারনেম, ইমেইল, বা ফোন নম্বর) এবং পাসওয়ার্ড গ্রহণ করা হয়।
+ * @param {object} req - রিকোয়েস্ট অবজেক্ট যা ব্যবহারকারীর ইনপুট ডেটা ধারণ করে।
+ * @param {object} res - রেসপন্স অবজেক্ট যা ক্লায়েন্টকে রেসপন্স পাঠাতে ব্যবহৃত হয়।
+ * @returns {Promise<void>} - ফাংশনটি একটি প্রমিস রিটার্ন করে যা রিকোয়েস্ট সম্পন্ন হওয়ার পর রেসপন্স প্রদান করে।
+ */
 const login = async (req, res) => {
+    // রিকোয়েস্ট বডি থেকে প্যারামিটারগুলো গ্রহণ করা হচ্ছে
     const { identifier, password } = req.body;
 
     try {
+        // ইউজার রেপোজিটরি তৈরি করা হচ্ছে যা ডাটাবেজে ব্যবহারকারীর তথ্য পরিচালনা করবে
         const userRepository = AppDataSource.getRepository(User);
 
-        // Regular expressions for phone and email validation
-        const phoneRegex = /^\+?\d{10,15}$/;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // ফোন নম্বর এবং ইমেইল যাচাইয়ের জন্য রেগুলার এক্সপ্রেশন ডিফাইন করা হচ্ছে
+        const phoneRegex = /^\+?\d{10,15}$/; // আন্তর্জাতিক ফরম্যাটে ফোন নম্বর যাচাই
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // ইমেইল ফরম্যাট যাচাই
 
+        // ব্যবহারকারীর ইনপুট অনুযায়ী লগইন পদ্ধতি নির্ধারণ করা হচ্ছে
         if (phoneRegex.test(identifier)) {
+            // যদি ইনপুট ফোন নম্বর হয়, তাহলে ফোন লগইন মেথড কল করা হচ্ছে
             await phoneLogin(identifier, userRepository, res);
         } else if (emailRegex.test(identifier)) {
+            // যদি ইনপুট ইমেইল হয়, তাহলে ইমেইল লগইন মেথড কল করা হচ্ছে
             await emailLogin(identifier, password, userRepository, res);
         } else {
+            // যদি ইনপুট ইউজারনেম হয়, তাহলে ইউজারনেম লগইন মেথড কল করা হচ্ছে
             await usernameLogin(identifier, password, userRepository, res);
         }
     } catch (err) {
-        console.error("Error logging in user:", err);
-        res.status(500).send('Error logging in user.');
+        // যদি কোন ত্রুটি ঘটে, তাহলে কনসোলে ত্রুটির বার্তা এবং রেসপন্স হিসাবে 500 স্টেটাস কোড পাঠানো হচ্ছে
+        console.error("ব্যবহারকারী লগইন করতে ত্রুটি:", err);
+        res.status(500).send('ব্যবহারকারী লগইন করতে ত্রুটি।');
     }
 };
 
+
+/**
+ * @function activateAccount
+ * @description ব্যবহারকারীর অ্যাকাউন্ট অ্যাক্টিভেশনের জন্য ফাংশনটি ব্যবহৃত হয়। অ্যাক্টিভেশন টোকেনের মাধ্যমে অ্যাকাউন্ট অ্যাক্টিভ করা হয়।
+ * @param {object} req - রিকোয়েস্ট অবজেক্ট যা ক্লায়েন্ট থেকে প্রেরিত ডেটা ধারণ করে। এখানে প্যারামস থেকে অ্যাক্টিভেশন টোকেন গ্রহণ করা হয়।
+ * @param {object} res - রেসপন্স অবজেক্ট যা ক্লায়েন্টকে রেসপন্স পাঠাতে ব্যবহৃত হয়।
+ * @returns {Promise<void>} - ফাংশনটি একটি প্রমিস রিটার্ন করে যা রিকোয়েস্ট সম্পন্ন হওয়ার পর রেসপন্স প্রদান করে।
+ */
 const activateAccount = async (req, res) => {
+    // রিকোয়েস্ট প্যারামস থেকে টোকেন গ্রহণ করা হচ্ছে
     const { token } = req.params;
+    
     try {
+        // টোকেন যাচাই করা হচ্ছে এবং এর মাধ্যমে ইউজার আইডি ডিকোড করা হচ্ছে
         const decoded = await verifyToken(token);
+        
+        // ডাটাবেজ থেকে ইউজার আইডি দ্বারা ব্যবহারকারী খুঁজে বের করা হচ্ছে
         const user = await findUserById(decoded.id);
 
+        // যদি ব্যবহারকারী পাওয়া না যায়, তাহলে ইনভ্যালিড অ্যাক্টিভেশন লিঙ্ক বার্তা রিটার্ন করা হচ্ছে
         if (!user) {
-            return res.status(400).json({ message: 'Invalid activation link' });
+            return res.status(400).json({ message: 'অবৈধ অ্যাক্টিভেশন লিঙ্ক' });
         }
 
+        // ব্যবহারকারীর অ্যাকাউন্ট অ্যাক্টিভ করা হচ্ছে
         await activateUserAccount(user);
-        res.status(200).json({ message: 'Account activated successfully' });
+
+        // সফল অ্যাক্টিভেশনের পর ব্যবহারকারীকে সাফল্যের বার্তা পাঠানো হচ্ছে
+        res.status(200).json({ message: 'অ্যাকাউন্ট সফলভাবে অ্যাক্টিভ করা হয়েছে' });
     } catch (err) {
-        res.status(400).json({ message: 'Invalid or expired activation link', error: err.message });
+        // যদি কোন ত্রুটি ঘটে, তাহলে ত্রুটির বার্তা সহ রেসপন্স পাঠানো হচ্ছে
+        res.status(400).json({ message: 'অবৈধ বা মেয়াদোত্তীর্ণ অ্যাক্টিভেশন লিঙ্ক', error: err.message });
     }
 };
+
 
 // Initiate Google OAuth Login
 const googleLogin = (req, res, next) => {

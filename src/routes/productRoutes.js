@@ -1,5 +1,7 @@
 const express = require('express');
 const upload = require('../middlewares/uploadMiddleware'); // Adjust the path as necessary
+const authenticateJWT = require('../middlewares/authenticateJWT'); // Import the JWT middleware
+
 const {
     createProduct,
     getAllProducts,

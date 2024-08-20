@@ -15,6 +15,7 @@ const uploadDirectory = path.join(__dirname, '../uploads');
 const storage = multer.diskStorage({
   destination: destination(uploadDirectory), // Use the helper method to set the destination
   filename: (req, file, cb) => {
+    console.log( "your file is",file);
     const sanitizedFileName = sanitizeFileName(file.originalname);
     const ext = path.extname(sanitizedFileName);
     const baseName = path.basename(sanitizedFileName, ext);

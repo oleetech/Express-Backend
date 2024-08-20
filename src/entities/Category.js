@@ -22,4 +22,16 @@ module.exports = new EntitySchema({
             updateDate: true,
         },
     },
+    relations: {
+        subCategories: {
+            type: 'one-to-many',
+            target: 'SubCategory',
+            mappedBy: 'category',
+        },
+        products: {
+            type: 'one-to-many',
+            target: 'Product',
+            mappedBy: 'category',
+        },
+    },
 });
