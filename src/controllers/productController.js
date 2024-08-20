@@ -225,15 +225,43 @@ const updateProduct = async (req, res) => {
 // Delete a product by ID
 const deleteProduct = async (req, res) => {
     try {
-        const result = await AppDataSource.getRepository(Product).delete(req.params.id);
-        if (result.affected === 0) {
+        // Fetch the product before deletion
+        const product = await AppDataSource.getRepository(Product)
+            .createQueryBuilder('product')
+            .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.subCategory', 'subCategory')
+            .where('product.id = :id', { id: req.params.id })
+            .getOne();
+
+        if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        res.status(200).json({ message: 'Product deleted successfully' });
+
+        // Delete the product
+        await AppDataSource.getRepository(Product).delete(req.params.id);
+
+        // Return the deleted product details without a message
+        res.status(200).json({
+            id: product.id,
+            name: product.name,
+            specification: product.specification,
+            weight: product.weight,
+            description: product.description,
+            color: product.color,
+            price: product.price,
+            imageUrl: product.imageUrl,
+            category_id: product.category ? product.category.id : null,
+            category_name: product.category ? product.category.name : null,
+            subcategory_id: product.subCategory ? product.subCategory.id : null,
+            subcategory_name: product.subCategory ? product.subCategory.name : null,
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt
+        });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete product', error });
     }
 };
+
 
 // Search products by color
 const searchProducts = async (req, res) => {
