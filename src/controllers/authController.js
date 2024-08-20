@@ -20,48 +20,65 @@ const {
     handleGoogleCallback 
 } = require('./authHelpers');
 
-// Register a new user
+/**
+ * নতুন ব্যবহারকারী নিবন্ধন করার জন্য এই ফাংশনটি ব্যবহৃত হয়।
+ * @function register
+ * @description ইউজার ডিভাইস থেকে প্রাপ্ত প্যারামিটারগুলো (যেমন ইউজারনেম, ইমেইল, পাসওয়ার্ড, ফোন নম্বর) প্রক্রিয়া করে এবং নতুন ব্যবহারকারী তৈরি করে।
+ * @param {object} req - রিকোয়েস্ট অবজেক্ট যা ব্যবহারকারীর ইনপুট ডেটা ধারণ করে।
+ * @param {object} res - রেসপন্স অবজেক্ট যা ক্লায়েন্টকে রেসপন্স পাঠাতে ব্যবহৃত হয়।
+ * @returns {Promise<void>} - ফাংশনটি একটি প্রমিস রিটার্ন করে যা রিকোয়েস্ট সম্পন্ন হওয়ার পর রেসপন্স প্রদান করে।
+ */
 const register = async (req, res) => {
+    // রিকোয়েস্ট বডি থেকে প্যারামিটারগুলো গ্রহণ করা হচ্ছে
     const { username, email, password, phone } = req.body;
+
+    // ইউজার রেপোজিটরি তৈরি করা হচ্ছে যা ডাটাবেজে ব্যবহারকারীর তথ্য পরিচালনা করবে
     const userRepository = AppDataSource.getRepository(User);
 
     try {
-        // Check if user already exists
+        // চেক করা হচ্ছে ব্যবহারকারী ইতোমধ্যে বিদ্যমান কিনা
         const existingUser = await checkIfUserExists(userRepository, username, email, phone);
         if (existingUser) {
+            // যদি ব্যবহারকারী ইতোমধ্যে বিদ্যমান থাকে, তাহলে 400 স্টেটাস কোড এবং একটি মেসেজ পাঠানো হচ্ছে
             return res.status(400).json({ message: 'ব্যবহারকারী ইতোমধ্যে নিবন্ধিত' });
         }
 
-        // Hash the password
+        // পাসওয়ার্ড হ্যাশ করা হচ্ছে যাতে নিরাপত্তা নিশ্চিত করা যায়
         const hashedPassword = await hashPassword(password);
 
-        // Create a new user instance
+        // নতুন ব্যবহারকারী তৈরি করা হচ্ছে দেওয়া ইনপুট তথ্য ব্যবহার করে
         const newUser = createNewUser(userRepository, username, email, hashedPassword, phone);
 
-        // Save the new user
+        // নতুন ব্যবহারকারী ডাটাবেজে সংরক্ষণ করা হচ্ছে
         await saveUser(userRepository, newUser);
 
         let response;
         if (email) {
+            // যদি ইমেইল প্রদান করা হয়, তাহলে ইমেইল দ্বারা নিবন্ধন পরিচালনা করা হচ্ছে
             response = await handleEmailRegistration(userRepository, newUser);
         } else if (phone) {
+            // যদি ফোন নম্বর প্রদান করা হয়, তাহলে ফোন দ্বারা নিবন্ধন পরিচালনা করা হচ্ছে
             response = await handlePhoneRegistration(userRepository, newUser, phone);
         } else {
-            // Default activation
+            // যদি না ইমেইল না ফোন প্রদান করা হয়, তাহলে ব্যবহারকারী সরাসরি সক্রিয় করা হচ্ছে
             newUser.isActivated = true;
             await saveUser(userRepository, newUser);
             response = { success: true, message: 'ব্যবহারকারী সফলভাবে নিবন্ধিত। প্রয়োজনীয় যাচাই সম্পন্ন করুন।' };
         }
 
+        // যদি নিবন্ধন সফল হয়, তাহলে 201 স্টেটাস কোড এবং সফলতার মেসেজ পাঠানো হচ্ছে
         if (response.success) {
             return res.status(201).json({ message: response.message });
         } else {
+            // যদি কোন ত্রুটি ঘটে, তাহলে 500 স্টেটাস কোড এবং ত্রুটির মেসেজ পাঠানো হচ্ছে
             return res.status(500).json({ message: response.message, error: response.error });
         }
     } catch (err) {
+        // যদি কোন অপ্রত্যাশিত ত্রুটি ঘটে, তাহলে 500 স্টেটাস কোড এবং ত্রুটির মেসেজ পাঠানো হচ্ছে
         return res.status(500).json({ message: 'ব্যবহারকারী নিবন্ধন করতে ত্রুটি', error: err.message });
     }
 };
+
 
 
 
