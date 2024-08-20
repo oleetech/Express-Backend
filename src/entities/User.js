@@ -36,6 +36,10 @@ module.exports = new EntitySchema({
             type: 'varchar',
             nullable: true,
         },
+        role: {
+            type: 'varchar',
+            default: 'subscriber',  // Default value for the role column
+        },
         isActivated: {
             type: 'boolean',
             default: false,

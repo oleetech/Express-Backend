@@ -17,13 +17,24 @@
 | `password` | string | The password for the user's account.     |
 | `phone`    | string | (optional) The phone number of the user. |
 
+
+<!-- Register With Email -->
 ```json
 {
   "username": "john_doe",
   "email": "john.doe@example.com",
   "password": "securePassword123",
-  "phone": "+1234567890"
 }
+```
+
+
+```json
+{
+  "password": "securePassword123",
+  "phone": 
+  "+1234567890"
+}
+
 ```
 
 ## Responses

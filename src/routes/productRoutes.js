@@ -14,10 +14,10 @@ const {
 const router = express.Router();
 
 // Routes
-router.get('/products', getAllProducts);
+router.get('/products',getAllProducts);
 router.get('/products/:id', getProductById);
-router.post('/products', upload.single('image'), createProduct);
-router.put('/products/:id', upload.single('image'), updateProduct);
-router.delete('/products/:id', deleteProduct);
+router.post('/products',authenticateJWT, upload.single('image'), createProduct);
+router.put('/products/:id', authenticateJWT,upload.single('image'), updateProduct);
+router.delete('/products/:id', authenticateJWT,deleteProduct);
 router.get('/products/search', searchProducts);
 module.exports = router;
