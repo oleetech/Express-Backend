@@ -150,19 +150,98 @@ const createProduct = async (req, res) => {
 
 
 // Update a product by ID
+// const updateProduct = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const { name, specification, weight, description, color, price, category_id, subcategory_id } = req.body;
+//         const imageUrl = req.file ? `http://${req.headers.host}/uploads/${req.file.filename}` : null; // Use server URL
+
+//         // Fetch the Category and SubCategory entities
+//         const category = await AppDataSource.getRepository(Category).findOneBy({ id: category_id }) ;
+//         const subCategory =  await AppDataSource.getRepository(SubCategory).findOneBy({ id: subcategory_id }) ;
+
+//         // Debugging: Check if category and subCategory are fetched correctly
+//         console.log('Fetched Category:', category);
+//         console.log('Fetched SubCategory:', subCategory);
+
+//         // Ensure that the category exists if provided
+//         if (category_id && !category) {
+//             return res.status(400).json({ message: 'Category not found' });
+//         }
+
+//         // Ensure that the subCategory exists if provided
+//         if (subcategory_id && !subCategory) {
+//             return res.status(400).json({ message: 'SubCategory not found' });
+//         }
+
+//         // Update the product
+//         const result = await AppDataSource.getRepository(Product).update(id, {
+//             name,
+//             specification,
+//             weight,
+//             description,
+//             color,
+//             price,
+//             category,
+//             subCategory,
+//             imageUrl
+//         });
+
+//         if (result.affected === 0) {
+//             return res.status(404).json({ message: 'Product not found' });
+//         }
+
+//         // Fetch the updated product with full details
+//         const updatedProduct = await AppDataSource.getRepository(Product)
+//             .createQueryBuilder('product')
+//             .leftJoinAndSelect('product.category', 'category')
+//             .leftJoinAndSelect('product.subCategory', 'subCategory')
+//             .where('product.id = :id', { id })
+//             .getOne();
+
+//         // Format the response to include category and subcategory details
+//         res.status(200).json({
+//             id: updatedProduct.id,
+//             name: updatedProduct.name,
+//             specification: updatedProduct.specification,
+//             weight: updatedProduct.weight,
+//             description: updatedProduct.description,
+//             color: updatedProduct.color,
+//             price: updatedProduct.price,
+//             imageUrl: updatedProduct.imageUrl,
+//             category_id: updatedProduct.category ? updatedProduct.category.id : null,
+//             category_name: updatedProduct.category ? updatedProduct.category.name : null,
+//             subcategory_id: updatedProduct.subCategory ? updatedProduct.subCategory.id : null,
+//             subcategory_name: updatedProduct.subCategory ? updatedProduct.subCategory.name : null,
+//             createdAt: updatedProduct.createdAt,
+//             updatedAt: updatedProduct.updatedAt
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Failed to update product', error });
+//     }
+// };
+
+
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, specification, weight, description, color, price, category_id, subcategory_id } = req.body;
-        const imageUrl = req.file ? `http://${req.headers.host}/uploads/${req.file.filename}` : null; // Use server URL
+
+        // Fetch the existing product to get the current imageUrl
+        const existingProduct = await AppDataSource.getRepository(Product).findOneBy({ id });
+
+        if (!existingProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Use the existing imageUrl if no new file is provided
+        const imageUrl = req.file 
+            ? `http://${req.headers.host}/uploads/${req.file.filename}` 
+            : existingProduct.imageUrl;
 
         // Fetch the Category and SubCategory entities
-        const category = await AppDataSource.getRepository(Category).findOneBy({ id: category_id }) ;
-        const subCategory =  await AppDataSource.getRepository(SubCategory).findOneBy({ id: subcategory_id }) ;
-
-        // Debugging: Check if category and subCategory are fetched correctly
-        console.log('Fetched Category:', category);
-        console.log('Fetched SubCategory:', subCategory);
+        const category = await AppDataSource.getRepository(Category).findOneBy({ id: category_id });
+        const subCategory = await AppDataSource.getRepository(SubCategory).findOneBy({ id: subcategory_id });
 
         // Ensure that the category exists if provided
         if (category_id && !category) {
