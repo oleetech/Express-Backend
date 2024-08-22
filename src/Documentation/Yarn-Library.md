@@ -80,8 +80,8 @@
 | `description`   | string  | Detailed description of the product.   | No       | `"This is a sample product description."` |
 | `color`         | string  | Color of the product.                  | No       | `"Red"`            |
 | `price`         | string  | Price of the product.                  | Yes      | `"19.99"`          |
-| `category`      | string  | Category ID or name.                   | Yes      | `"Electronics"`    |
-| `sub_category`  | string  | Sub-category ID or name.               | No       | `"Mobile Phones"`  |
+| `category_id`   | int  | Category ID.                              | Yes      | `"Electronics"`    |
+| `sub_category_id`| int  | Sub-category ID                        | No       | `"Mobile Phones"`  |
 | `image`         | file    | The image file of the product.         | No       | `sample-product.jpg` |
 
 ## JSON Example Request
@@ -172,8 +172,8 @@
 | `description`  | string | Description of the product               | `"Updated product description"` |
 | `color`        | string | Color of the product                     | `"Blue"`                |
 | `price`        | string | Price of the product                     | `"29.99"`               |
-| `category`     | string | Category of the product                  | `"Electronics"`         |
-| `sub_category` | string | Sub-category of the product              | `"Laptops"`             |
+| `category_id`     | string | Category of the product                  | `"Electronics"`         |
+| `sub_category_id` | string | Sub-category of the product              | `"Laptops"`             |
 | `image`        | string | Path to the new image file (optional)    | `"/uploads/new-image.jpg"` |
 
 ## JSON Example Request
@@ -186,8 +186,8 @@
     "description": "Updated product description",
     "color": "Blue",
     "price": "29.99",
-    "category": 1,
-    "subcategory": 2,
+    "sub_category_id": 1,
+    "sub_category_id": 2,
     "image": "/uploads/new-image.jpg"
 }
 ```
