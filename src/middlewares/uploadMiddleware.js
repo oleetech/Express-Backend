@@ -15,6 +15,7 @@ const uploadDirectory = path.join(__dirname, '../uploads');
 const storage = multer.diskStorage({
   destination: destination(uploadDirectory), // Use the helper method to set the destination
   filename: (req, file, cb) => {
+    console.log( "your file is",file);
     const sanitizedFileName = sanitizeFileName(file.originalname);
     const ext = path.extname(sanitizedFileName);
     const baseName = path.basename(sanitizedFileName, ext);
@@ -26,7 +27,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: limitFileSize(5 * 1024 * 1024), // Limit file size to 5MB
-  fileFilter: fileFilter(/jpeg|jpg|png|gif|pdf|docx/), // Allow specific file types
+  fileFilter: fileFilter(/jpeg|jpg|png|gif|pdf|docx|webp/), // Allow specific file types
 });
 
 module.exports = upload;

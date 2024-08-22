@@ -31,5 +31,10 @@ module.exports = new EntitySchema({
                 name: 'category_id',
             },
         },
+        products: {
+            type: 'one-to-many',
+            target: 'Product',
+            mappedBy: 'subCategory',
+        },
     },
 });

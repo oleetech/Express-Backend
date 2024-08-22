@@ -37,7 +37,7 @@ module.exports = new EntitySchema({
         },
         imageUrl: {
             type: 'varchar',
-            nullable: true, 
+            nullable: true,
         },
         createdAt: {
             type: 'timestamp',
@@ -55,6 +55,7 @@ module.exports = new EntitySchema({
             joinColumn: {
                 name: 'category_id',
             },
+            nullable: false, // Ensure category is not null
         },
         subCategory: {
             type: 'many-to-one',
@@ -62,6 +63,7 @@ module.exports = new EntitySchema({
             joinColumn: {
                 name: 'sub_category_id',
             },
+            nullable: true, // SubCategory can be null if not always required
         },
     },
 });
