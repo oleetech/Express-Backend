@@ -7,8 +7,8 @@ const {
     getAllProducts,
     getProductById,
     updateProduct,
-    deleteProduct,
-    searchProducts 
+    deleteProduct
+     
 } = require('../controllers/productController'); // Adjust the path as necessary
 
 const router = express.Router();
@@ -19,5 +19,4 @@ router.get('/products/:id', getProductById);
 router.post('/products',authenticateJWT, upload.single('image'), createProduct);
 router.put('/products/:id', authenticateJWT,upload.single('image'), updateProduct);
 router.delete('/products/:id', authenticateJWT,deleteProduct);
-router.get('/products/search', searchProducts);
 module.exports = router;
