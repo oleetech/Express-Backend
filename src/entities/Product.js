@@ -1,6 +1,7 @@
 const { EntitySchema } = require('typeorm');
 const Category = require('./Category');
 const SubCategory = require('./SubCategory');
+const SubSubCategory = require('./SubSubCategory');
 
 module.exports = new EntitySchema({
     name: 'Product',
@@ -55,7 +56,6 @@ module.exports = new EntitySchema({
             joinColumn: {
                 name: 'category_id',
             },
-            nullable: false, // Ensure category is not null
         },
         subCategory: {
             type: 'many-to-one',
@@ -63,7 +63,14 @@ module.exports = new EntitySchema({
             joinColumn: {
                 name: 'sub_category_id',
             },
-            nullable: true, // SubCategory can be null if not always required
+        },
+        subSubCategory: {
+            type: 'many-to-one',
+            target: 'SubSubCategory',
+            joinColumn: {
+                name: 'sub_sub_category_id',
+            },
         },
     },
 });
+

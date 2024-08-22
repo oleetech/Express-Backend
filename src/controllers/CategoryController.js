@@ -2,6 +2,7 @@
 
 const AppDataSource = require('../config/database'); // Import your data source
 const Category = require('../entities/Category'); // Import the Category entity
+const Product = require('../entities/Product'); // Import the Product entity
 
 // Get all categories
 const getCategories = async (req, res) => {
@@ -62,23 +63,34 @@ const updateCategory = async (req, res) => {
 
 
 // Delete a category by ID
-// Delete a category by ID and return the deleted data
 const deleteCategory = async (req, res) => {
     try {
         const categoryRepository = AppDataSource.getRepository(Category);
+        const productRepository = AppDataSource.getRepository(Product);
+
+        // Check if the category exists
         const category = await categoryRepository.findOneBy({ id: req.params.id });
 
         if (!category) {
             return res.status(404).json({ error: 'Category not found' });
         }
 
-        await categoryRepository.remove(category); // Remove the category
-        res.status(200).json(category); // Return the deleted category
+        // Check if any products are linked to the category
+        const linkedProducts = await productRepository.find({ where: { category: { id: req.params.id } } });
+
+        if (linkedProducts.length > 0) {
+            return res.status(400).json({ error: 'Cannot delete category because it is linked to one or more products' });
+        }
+
+        // If no products are linked, proceed to remove the category
+        await categoryRepository.remove(category);
+
+        // Return the deleted category details
+        res.status(200).json(category);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to delete category', details: error });
+        res.status(500).json({ error: 'Failed to delete category', details: error.message });
     }
 };
-
 
 module.exports = {
     getCategories,

@@ -49,6 +49,11 @@ app.use('/api', categoryRoutes); // Add the category routes with a base path of 
 const subCategoryRoutes = require('./routes/subCategoryRoutes');
 app.use('/api', subCategoryRoutes); 
 
+// Import the subSubCategory routes
+const subSubCategoryRoutes = require('./routes/subSubCategoryRoutes');
+app.use('/api', subSubCategoryRoutes);
+
+
 // Use the products routes
 const productRoutes = require('./routes/productRoutes');
 app.use('/api/', productRoutes);

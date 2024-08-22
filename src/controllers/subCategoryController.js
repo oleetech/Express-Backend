@@ -3,6 +3,7 @@
 const AppDataSource = require('../config/database'); // Import your data source
 const SubCategory = require('../entities/SubCategory'); // Import the SubCategory entity
 const Category = require('../entities/Category'); // Import the SubCategory entity
+const Product = require('../entities/Product'); // Import the Product entity
 
 // Get all subcategories
 const getAllSubCategories = async (req, res) => {
@@ -154,16 +155,29 @@ const updateSubCategory = async (req, res) => {
 const deleteSubCategory = async (req, res) => {
     try {
         const subCategoryRepository = AppDataSource.getRepository(SubCategory);
+        const productRepository = AppDataSource.getRepository(Product);
+
+        // Check if the subcategory exists
         const subCategory = await subCategoryRepository.findOneBy({ id: req.params.id });
 
         if (!subCategory) {
             return res.status(404).json({ error: 'Subcategory not found' });
         }
 
-        await subCategoryRepository.remove(subCategory); // Remove the subcategory
-        res.status(200).json(subCategory); // Return the deleted subcategory
+        // Check if any products are linked to the subcategory
+        const linkedProducts = await productRepository.find({ where: { subCategory: { id: req.params.id } } });
+
+        if (linkedProducts.length > 0) {
+            return res.status(400).json({ error: 'Cannot delete subcategory because it is linked to one or more products' });
+        }
+
+        // If no products are linked, proceed to remove the subcategory
+        await subCategoryRepository.remove(subCategory);
+
+        // Return the deleted subcategory details
+        res.status(200).json(subCategory);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to delete subcategory', details: error });
+        res.status(500).json({ error: 'Failed to delete subcategory', details: error.message });
     }
 };
 
