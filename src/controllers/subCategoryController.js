@@ -18,7 +18,7 @@ const getAllSubCategories = async (req, res) => {
             id: subCategory.id,
             name: subCategory.name,
             category_id: subCategory.category.id, // Extract the category_id
-            parent_category: subCategory.category.name, 
+            category: subCategory.category.name, 
             createdAt: subCategory.createdAt,
             updatedAt: subCategory.updatedAt
         }));
@@ -49,7 +49,7 @@ const getSubCategoryById = async (req, res) => {
             id: subCategory.id,
             name: subCategory.name,
             category_id: subCategory.category.id, // Extract the category_id
-            parent_category: subCategory.category.name, 
+            category: subCategory.category.name, 
             createdAt: subCategory.createdAt,
             updatedAt: subCategory.updatedAt
         });
@@ -87,7 +87,7 @@ const createSubCategory = async (req, res) => {
             id: savedSubCategory.id,
             name: savedSubCategory.name,
             category_id: savedSubCategory.category.id, // Include the category_id in the response
-            parent_category: savedSubCategory.category.name, 
+            category: savedSubCategory.category.name, 
             createdAt: savedSubCategory.createdAt,
             updatedAt: savedSubCategory.updatedAt
         });
@@ -138,7 +138,7 @@ const updateSubCategory = async (req, res) => {
             id: updatedSubCategory.id,
             name: updatedSubCategory.name,
             category_id: updatedSubCategory.category.id, // Include the updated category_id
-            parent_category: updatedSubCategory.category.name, // Include the category name
+            category: updatedSubCategory.category.name, // Include the category name
             createdAt: updatedSubCategory.createdAt,
             updatedAt: updatedSubCategory.updatedAt
         });

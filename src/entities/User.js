@@ -79,4 +79,22 @@ module.exports = new EntitySchema({
             updateDate: true,
         },
     },
+
+    relations: {
+        role: {
+            target: 'Role',
+            type: 'many-to-one',
+            nullable: true,
+        },
+        userGroup: {
+            target: 'UserGroup',
+            type: 'many-to-one',
+            nullable: true,
+        },
+        permissions: {
+            target: 'Permission',
+            type: 'many-to-many',
+            inverseSide: 'users',
+        },
+    },
 });

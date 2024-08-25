@@ -59,7 +59,7 @@ const getAllProducts = async (req, res) => {
             color: product.color, // প্রোডাক্টের রং
             price: product.price, // প্রোডাক্টের দাম
             imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
-            featureImage: product.featureImage, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
+            featureImage: product.featureImage , // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
             category_id: product.category ? product.category.id : null, // প্রোডাক্টের ক্যাটাগরি আইডি
             category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম

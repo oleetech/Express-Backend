@@ -4,19 +4,24 @@ const AppDataSource = require('../config/database'); // Import your data source
 const SubSubCategory = require('../entities/SubSubCategory'); // Import the SubSubCategory entity
 const SubCategory = require('../entities/SubCategory'); // Import the SubCategory entity
 const Product = require('../entities/Product'); // Import the Product entity
+const Category = require('../entities/Category');
 
 // Get all sub-subcategories
 const getAllSubSubCategories = async (req, res) => {
     try {
         const subSubCategories = await AppDataSource.getRepository(SubSubCategory).find({
-            relations: ['subCategory'], // Include the subCategory in the result
+            relations: ['subCategory', 'subCategory.category'], // Include subCategory and its category
         });
 
         const subSubCategoriesWithDetails = subSubCategories.map(subSubCategory => ({
             id: subSubCategory.id,
             name: subSubCategory.name,
-            sub_category_id: subSubCategory.subCategory.id, // Extract the subCategory_id
-            parent_sub_category: subSubCategory.subCategory.name,
+            subCategory: subSubCategory.subCategory.name, 
+            subCategoryId: subSubCategory.subCategory.id, 
+
+            category: subSubCategory.subCategory.category.name, 
+            categoryId: subSubCategory.subCategory.category.id, 
+
             createdAt: subSubCategory.createdAt,
             updatedAt: subSubCategory.updatedAt
         }));
@@ -32,7 +37,7 @@ const getSubSubCategoryById = async (req, res) => {
     try {
         const subSubCategory = await AppDataSource.getRepository(SubSubCategory).findOne({
             where: { id: parseInt(req.params.id) },
-            relations: ['subCategory'], // Include the subCategory in the result
+            relations: ['subCategory', 'subCategory.category'], // Include subCategory and its category
         });
 
         if (!subSubCategory) {
@@ -42,8 +47,11 @@ const getSubSubCategoryById = async (req, res) => {
         res.status(200).json({
             id: subSubCategory.id,
             name: subSubCategory.name,
-            sub_category_id: subSubCategory.subCategory.id, // Extract the subCategory_id
-            parent_sub_category: subSubCategory.subCategory.name,
+            subCategory: subSubCategory.subCategory.name, 
+            subCategoryId: subSubCategory.subCategory.id, 
+
+            category: subSubCategory.subCategory.category.name, 
+            categoryId: subSubCategory.subCategory.category.id, 
             createdAt: subSubCategory.createdAt,
             updatedAt: subSubCategory.updatedAt
         });
@@ -52,13 +60,17 @@ const getSubSubCategoryById = async (req, res) => {
     }
 };
 
+
 // Create a new sub-subcategory
 const createSubSubCategory = async (req, res) => {
     try {
         const { name, sub_category_id } = req.body;
 
         const subCategoryRepository = AppDataSource.getRepository(SubCategory);
-        const existingSubCategory = await subCategoryRepository.findOneBy({ id: sub_category_id });
+        const existingSubCategory = await subCategoryRepository.findOne({
+            where: { id: sub_category_id },
+            relations: ['category'] // Include the category relation
+        });
 
         if (!existingSubCategory) {
             return res.status(404).json({ message: 'SubCategory not found' });
@@ -75,8 +87,11 @@ const createSubSubCategory = async (req, res) => {
         res.status(201).json({
             id: savedSubSubCategory.id,
             name: savedSubSubCategory.name,
-            sub_category_id: savedSubSubCategory.subCategory.id,
-            parent_sub_category: savedSubSubCategory.subCategory.name,
+            subCategory: savedSubSubCategory.subCategory.name, 
+            subCategoryId: savedSubSubCategory.subCategory.id, 
+
+            category: savedSubSubCategory.subCategory.category.name, 
+            categoryId: savedSubSubCategory.subCategory.category.id, 
             createdAt: savedSubSubCategory.createdAt,
             updatedAt: savedSubSubCategory.updatedAt
         });
@@ -85,20 +100,29 @@ const createSubSubCategory = async (req, res) => {
     }
 };
 
+
 // Update a sub-subcategory
 const updateSubSubCategory = async (req, res) => {
     try {
         const subSubCategoryRepository = AppDataSource.getRepository(SubSubCategory);
         const subCategoryRepository = AppDataSource.getRepository(SubCategory);
 
-        const subSubCategory = await subSubCategoryRepository.findOneBy({ id: req.params.id });
+        // Find the existing SubSubCategory
+        const subSubCategory = await subSubCategoryRepository.findOne({
+            where: { id: req.params.id },
+            relations: ['subCategory', 'subCategory.category'] // Include subCategory and its category
+        });
 
         if (!subSubCategory) {
             return res.status(404).json({ message: 'SubSubCategory not found' });
         }
 
+        // Update SubCategory if sub_category_id is provided
         if (req.body.sub_category_id) {
-            const existingSubCategory = await subCategoryRepository.findOneBy({ id: req.body.sub_category_id });
+            const existingSubCategory = await subCategoryRepository.findOne({
+                where: { id: req.body.sub_category_id },
+                relations: ['category'] // Include the category relation
+            });
 
             if (!existingSubCategory) {
                 return res.status(404).json({ message: 'SubCategory not found' });
@@ -107,15 +131,25 @@ const updateSubSubCategory = async (req, res) => {
             subSubCategory.subCategory = existingSubCategory;
         }
 
+        // Merge the updated fields
         subSubCategoryRepository.merge(subSubCategory, req.body);
 
+        // Save the updated SubSubCategory
         const updatedSubSubCategory = await subSubCategoryRepository.save(subSubCategory);
 
+        // Return the updated details including main category and sub-category names
         res.status(200).json({
             id: updatedSubSubCategory.id,
             name: updatedSubSubCategory.name,
-            sub_category_id: updatedSubSubCategory.subCategory.id,
-            parent_sub_category: updatedSubSubCategory.subCategory.name,
+
+            subCategory: updatedSubSubCategory.subCategory.name, 
+            subCategoryId: updatedSubSubCategory.subCategory.id, 
+
+            category: updatedSubSubCategory.subCategory.category.name, 
+            categoryId: updatedSubSubCategory.subCategory.category.id,
+
+
+
             createdAt: updatedSubSubCategory.createdAt,
             updatedAt: updatedSubSubCategory.updatedAt
         });
@@ -124,31 +158,52 @@ const updateSubSubCategory = async (req, res) => {
     }
 };
 
+
 // Delete a sub-subcategory by ID
 const deleteSubSubCategory = async (req, res) => {
     try {
         const subSubCategoryRepository = AppDataSource.getRepository(SubSubCategory);
         const productRepository = AppDataSource.getRepository(Product);
 
-        const subSubCategory = await subSubCategoryRepository.findOneBy({ id: req.params.id });
+        // Find the SubSubCategory by ID
+        const subSubCategory = await subSubCategoryRepository.findOne({
+            where: { id: req.params.id },
+            relations: ['subCategory', 'subCategory.category'] // Ensure relations are included
+        });
 
         if (!subSubCategory) {
             return res.status(404).json({ error: 'SubSubCategory not found' });
         }
 
-        const linkedProducts = await productRepository.find({ where: { subSubCategory: { id: req.params.id } } });
+        // Check if there are linked products
+        const linkedProducts = await productRepository.find({
+            where: { subSubCategory: { id: req.params.id } }
+        });
 
         if (linkedProducts.length > 0) {
             return res.status(400).json({ error: 'Cannot delete sub-subcategory because it is linked to one or more products' });
         }
 
+        // Remove the SubSubCategory
         await subSubCategoryRepository.remove(subSubCategory);
 
-        res.status(200).json(subSubCategory);
+        // Respond with details of the deleted SubSubCategory
+        res.status(200).json({
+            id: subSubCategory.id,
+            name: subSubCategory.name,
+            subCategory: subSubCategory.subCategory.name, 
+            subCategoryId: subSubCategory.subCategory.id, 
+
+            category: subSubCategory.subCategory.category.name, 
+            categoryId: subSubCategory.subCategory.category.id, 
+            createdAt: subSubCategory.createdAt,
+            updatedAt: subSubCategory.updatedAt
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete sub-subcategory', details: error.message });
     }
 };
+
 
 module.exports = {
     getAllSubSubCategories,
