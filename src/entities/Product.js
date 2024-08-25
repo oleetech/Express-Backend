@@ -20,7 +20,7 @@ module.exports = new EntitySchema({
             type: 'text',
             nullable: true,
         },
-        weight: {
+        knittingGauge: {
             type: 'varchar',
             nullable: true,
         },
@@ -61,23 +61,17 @@ module.exports = new EntitySchema({
         category: {
             type: 'many-to-one',
             target: 'Category',
-            joinColumn: {
-                name: 'category_id',
-            },
+            // No explicit joinColumn, TypeORM will use categoryId by default
         },
         subCategory: {
             type: 'many-to-one',
             target: 'SubCategory',
-            joinColumn: {
-                name: 'sub_category_id',
-            },
+            // No explicit joinColumn, TypeORM will use subCategoryId by default
         },
         subSubCategory: {
             type: 'many-to-one',
             target: 'SubSubCategory',
-            joinColumn: {
-                name: 'sub_sub_category_id',
-            },
+            // No explicit joinColumn, TypeORM will use subSubCategoryId by default
         },
     },
 });

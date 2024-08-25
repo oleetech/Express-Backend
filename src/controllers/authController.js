@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const AppDataSource = require('../config/database');
 const User = require('../entities/User');
+
 const passport = require('passport');
 const {
     checkIfUserExists, 
@@ -191,11 +192,19 @@ const googleCallback = (req, res, next) => {
 };
 
 
+
+
+
+
+
+
 // Export the functions
 module.exports = {
     register,
     activateAccount,
     login,
     googleLogin,
-    googleCallback
+    googleCallback,
+
+
 };
