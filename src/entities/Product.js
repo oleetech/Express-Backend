@@ -28,6 +28,10 @@ module.exports = new EntitySchema({
             type: 'text',
             nullable: true,
         },
+        enquery: {
+            type: 'text',
+            nullable: true,
+        },        
         color: {
             type: 'varchar',
             nullable: true,
@@ -40,6 +44,10 @@ module.exports = new EntitySchema({
             type: 'varchar',
             nullable: true,
         },
+        featureImage: {
+            type: 'boolean',
+            default: false, 
+        },        
         createdAt: {
             type: 'timestamp',
             createDate: true,

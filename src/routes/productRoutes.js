@@ -7,7 +7,10 @@ const {
     getAllProducts,
     getProductById,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    updateFeatureImage,
+    getEnqueryById,
+    updateEnqueryById
      
 } = require('../controllers/productController'); // Adjust the path as necessary
 
@@ -19,4 +22,9 @@ router.get('/products/:id', getProductById);
 router.post('/products',authenticateJWT, upload.single('image'), createProduct);
 router.put('/products/:id', authenticateJWT,upload.single('image'), updateProduct);
 router.delete('/products/:id', authenticateJWT,deleteProduct);
+router.put('/update-feature-image', updateFeatureImage);
+// Route to fetch `enquery` data by product ID
+router.get('/products/:id/enquery', getEnqueryById);
+// Route to update `enquery` data by product ID
+router.put('/products/:id/enquery', updateEnqueryById);
 module.exports = router;
