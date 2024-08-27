@@ -36,7 +36,7 @@ const getAllProducts = async (req, res) => {
             color: product.color, // প্রোডাক্টের রং
             price: product.price, // প্রোডাক্টের দাম
             imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
-            featureImage: product.featureImage, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
+            featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
             category_id: product.category ? product.category.id : null, // প্রোডাক্টের ক্যাটাগরি আইডি
             category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
@@ -100,7 +100,7 @@ const getProductById = async (req, res) => {
             color: product.color, // প্রোডাক্টের রং
             price: product.price, // প্রোডাক্টের দাম
             imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
-            featureImage: product.featureImage, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
+            featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
             category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
             sub_category_name: product.subCategory ? product.subCategory.name : null, // প্রোডাক্টের সাবক্যাটাগরি নাম
@@ -143,7 +143,7 @@ const createProduct = async (req, res) => {
             category_id, 
             subcategory_id, 
             subsubcategoryId, 
-            featureImage,   // ফিচার ইমেজ স্ট্যাটাস
+            featured,   // ফিচার ইমেজ স্ট্যাটাস
             enquery         // ইনকোয়েরি তথ্য
         } = req.body;
 
@@ -182,7 +182,7 @@ const createProduct = async (req, res) => {
             subCategory,
             subSubCategory,
             imageUrl,
-            featureImage, // ফিচার ইমেজ
+            featured, // ফিচার ইমেজ
             enquery       // ইনকোয়েরি
         });
 
@@ -205,7 +205,7 @@ const createProduct = async (req, res) => {
             color: savedProduct.color,
             price: savedProduct.price,
             imageUrl: savedProduct.imageUrl,
-            featureImage: savedProduct.featureImage, 
+            featured: savedProduct.featured, 
             enquery: savedProduct.enquery, 
             category_id: savedProduct.category ? savedProduct.category.id : null,
             category_name: savedProduct.category ? savedProduct.category.name : null,
@@ -252,7 +252,7 @@ const updateProduct = async (req, res) => {
             category_id, 
             subcategory_id, 
             subsubcategoryId,  // সাব-সাবক্যাটাগরি আইডি
-            featureImage,       // ফিচার ইমেজ স্ট্যাটাস
+            featured,       // ফিচার ইমেজ স্ট্যাটাস
             enquery             // ইনকোয়েরি তথ্য
         } = req.body;
 
@@ -300,7 +300,7 @@ const updateProduct = async (req, res) => {
             subCategory,
             subSubCategory, // সাব-সাবক্যাটাগরি অন্তর্ভুক্ত করা হচ্ছে
             imageUrl,
-            featureImage, // ফিচার ইমেজ স্ট্যাটাস
+            featured, // ফিচার ইমেজ স্ট্যাটাস
             enquery       // ইনকোয়েরি তথ্য
         });
 
@@ -328,7 +328,7 @@ const updateProduct = async (req, res) => {
             color: updatedProduct.color,
             price: updatedProduct.price,
             imageUrl: updatedProduct.imageUrl,
-            featureImage: updatedProduct.featureImage, // ফিচার ইমেজ স্ট্যাটাস
+            featured: updatedProduct.featured, // ফিচার ইমেজ স্ট্যাটাস
             enquery: updatedProduct.enquery, // ইনকোয়েরি তথ্য
             category_id: updatedProduct.category ? updatedProduct.category.id : null,
             category_name: updatedProduct.category ? updatedProduct.category.name : null,
@@ -394,114 +394,116 @@ const deleteProduct = async (req, res) => {
  * @access Public
  * 
  */
-const updateFeatureImage = async (req, res) => {
-    try {
-        // রিকোয়েস্ট বডি থেকে প্রোডাক্ট আইডির অ্যারে এবং ফিচার ইমেজ স্ট্যাটাস গ্রহণ করা হচ্ছে
-        const { ids, featureImage } = req.body;
 
-        // প্রাপ্ত আইডিগুলোর উপর ভিত্তি করে প্রোডাক্টগুলি আপডেট করার চেষ্টা করা হচ্ছে
-        const result = await AppDataSource.getRepository(Product)
+
+const updateFeatured = async (req, res) => {
+    try {
+        const { ids, featured } = req.body;
+        console.log(ids, featured);
+
+        // Check if ids is an array and is not empty
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ message: 'Invalid or empty IDs array' });
+        }
+
+        // Ensure that all items in the ids array are numbers (or convert them if needed)
+        const numericIds = ids.map(id => {
+            if (typeof id !== 'number') {
+                const parsedId = parseInt(id, 10);
+                if (isNaN(parsedId)) {
+                    return null; // Return null for invalid IDs
+                }
+                return parsedId; // Convert to number if valid
+            }
+            return id; // Already a number
+        }).filter(id => id !== null); // Remove any invalid IDs
+
+        // Log the numeric IDs for debugging
+        console.log('Processed Numeric IDs:', numericIds);
+
+        // Perform the update
+        const updateResult = await AppDataSource.getRepository(Product)
             .createQueryBuilder()
             .update(Product)
-            .set({ featureImage }) // ফিচার ইমেজ স্ট্যাটাস সেট করা হচ্ছে
-            .whereInIds(ids) // যেসব প্রোডাক্ট আইডি প্রাপ্ত হয়েছে তাদের জন্য
+            .set({ featured }) // Update the featured status
+            .whereInIds(numericIds) // Match products by numeric IDs
             .execute();
 
-        // চেক করা হচ্ছে প্রোডাক্টগুলি সফলভাবে আপডেট হয়েছে কিনা
-        if (result.affected === 0) {
-            // যদি কোন প্রোডাক্ট আপডেট না হয়, তাহলে 404 স্টেটাস কোড এবং একটি মেসেজ পাঠানো হচ্ছে
-            return res.status(404).json({ message: 'প্রোডাক্ট পাওয়া যায়নি' });
+        // Log update result
+        console.log('Update Result:', updateResult);
+
+        // Check if any rows were affected
+        if (updateResult.affected === 0) {
+            return res.status(404).json({ message: 'No products found for the given IDs' });
         }
 
-        // সফল হলে 200 স্টেটাস কোড এবং একটি মেসেজ পাঠানো হচ্ছে
-        res.status(200).json({ message: 'প্রোডাক্টের ফিচার ইমেজ সফলভাবে আপডেট হয়েছে' });
+        // Fetch the updated products
+        const updatedProducts = await AppDataSource.getRepository(Product)
+            .createQueryBuilder('product')
+            .whereInIds(numericIds)
+            .getMany();
+
+        // Log updated products
+        console.log('Updated Products:', updatedProducts);
+
+        // Respond with updated products
+        res.status(200).json({ updatedProducts });
 
     } catch (error) {
-        // কোন এক্সেপশন হলে 500 স্টেটাস কোড এবং একটি মেসেজ পাঠানো হচ্ছে
-        res.status(500).json({ message: 'ফিচার ইমেজ আপডেট করতে ব্যর্থ হয়েছে', error });
+        // Log error
+        console.error('Error occurred:', error);
+        res.status(500).json({ message: 'Failed to update featured status', error });
     }
 };
 
-/**
- * একটি প্রোডাক্টের `enquery` ডাটা আইডি দ্বারা ফেচ করার জন্য এই ফাংশনটি ব্যবহৃত হয়।
- * @function getEnqueryById
- * @description এই ফাংশনটি একটি প্রোডাক্টের `enquery` ডাটা আইডি দ্বারা ফেরত দেয়।
- * @route GET /api/products/:id/enquery
- * @access Public
- * 
- * @param {Object} req - HTTP রিকোয়েস্ট অবজেক্ট
- * @param {Object} res - HTTP রেসপন্স অবজেক্ট
- * 
- * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্টের `enquery` সফলভাবে ফেচ হলে রেসপন্স প্রদান করে।
 
- */
 
-const getEnqueryById = async (req, res) => {
+// Controller method to update the featured status of a single product
+const updateSingleFeatured = async (req, res) => {
     try {
-        const { id } = req.params;
+        // Extracting product ID and featured status from the request body
+        const { id, featured } = req.body;
+        console.log(id, featured);
 
-        // প্রোডাক্ট ফেচ করা হচ্ছে আইডি দ্বারা
-        const product = await AppDataSource.getRepository(Product).findOneBy({ id });
+        // Validate ID and featured values
+        if (typeof id !== 'number' || typeof featured !== 'boolean') {
+            return res.status(400).json({ message: 'Invalid ID or featured value' });
+        }
 
-        // যদি প্রোডাক্ট পাওয়া না যায়, তাহলে ত্রুটির বার্তা পাঠানো হচ্ছে
-        if (!product) {
+        // Perform the update
+        const updateResult = await AppDataSource.getRepository(Product)
+            .createQueryBuilder()
+            .update(Product)
+            .set({ featured }) // Update the featured status
+            .where("id = :id", { id }) // Match product by the given ID
+            .execute();
+
+        // Check if any rows were affected
+        if (updateResult.affected === 0) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        // প্রোডাক্টের `enquery` ডাটা সহ সফল রেসপন্স পাঠানো হচ্ছে
-        res.status(200).json({
-            id: product.id,
-            enquery: product.enquery
-        });
+        // Fetch the updated product
+        const updatedProduct = await AppDataSource.getRepository(Product)
+            .createQueryBuilder('product')
+            .where("id = :id", { id })
+            .getOne();
+
+        // Respond with the updated product
+        res.status(200).json({ updatedProduct });
+
     } catch (error) {
-        // কোনো ত্রুটি হলে তা কনসোলে লগ করা হচ্ছে এবং ক্লায়েন্টকে ত্রুটির বার্তা পাঠানো হচ্ছে
-        res.status(500).json({ message: 'Failed to get enquiry data', error });
+        // Log error
+        console.error('Error occurred:', error);
+        res.status(500).json({ message: 'Failed to update featured status', error });
     }
 };
 
-/**
- * একটি প্রোডাক্টের `enquery` ডাটা আইডি দ্বারা আপডেট করার জন্য এই ফাংশনটি ব্যবহৃত হয়।
- * @function updateEnqueryById
- * @description এই ফাংশনটি একটি প্রোডাক্টের `enquery` ডাটা আইডি দ্বারা আপডেট করে।
- * @route PUT /api/products/:id/enquery
- * @access Public
- * 
- * @param {Object} req - HTTP রিকোয়েস্ট অবজেক্ট
- * @param {Object} res - HTTP রেসপন্স অবজেক্ট
- * 
- * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্টের `enquery` সফলভাবে আপডেট হলে রেসপন্স প্রদান করে।
 
- */
 
-const updateEnqueryById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { enquery } = req.body;
 
-        // প্রোডাক্ট ফেচ করা হচ্ছে আইডি দ্বারা
-        const product = await AppDataSource.getRepository(Product).findOneBy({ id });
 
-        // যদি প্রোডাক্ট পাওয়া না যায়, তাহলে ত্রুটির বার্তা পাঠানো হচ্ছে
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
 
-        // `enquery` ডাটা আপডেট করা হচ্ছে
-        await AppDataSource.getRepository(Product).update(id, { enquery });
-
-        // আপডেট হওয়া প্রোডাক্ট ফেরত দেয়া হচ্ছে
-        const updatedProduct = await AppDataSource.getRepository(Product).findOneBy({ id });
-
-        // সফলভাবে আপডেট হওয়া রেসপন্স পাঠানো হচ্ছে
-        res.status(200).json({
-            id: updatedProduct.id,
-            enquery: updatedProduct.enquery
-        });
-    } catch (error) {
-        // কোনো ত্রুটি হলে তা কনসোলে লগ করা হচ্ছে এবং ক্লায়েন্টকে ত্রুটির বার্তা পাঠানো হচ্ছে
-        res.status(500).json({ message: 'Failed to update enquiry data', error });
-    }
-};
 
 
 module.exports = {
@@ -510,7 +512,6 @@ module.exports = {
     createProduct,
     updateProduct,
     deleteProduct,
-    updateFeatureImage,
-    getEnqueryById,
-    updateEnqueryById
+    updateFeatured,
+    updateSingleFeatured
 };

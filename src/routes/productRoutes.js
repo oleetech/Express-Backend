@@ -8,9 +8,8 @@ const {
     getProductById,
     updateProduct,
     deleteProduct,
-    updateFeatureImage,
-    getEnqueryById,
-    updateEnqueryById
+    updateFeatured,
+    updateSingleFeatured,
      
 } = require('../controllers/productController'); // Adjust the path as necessary
 
@@ -20,13 +19,20 @@ const router = express.Router();
 
 /**
  * @swagger
- * /products:
+ * tags:
+ *   name: Products
+ *   description: API for managing products
+ */
+
+/**
+ * @swagger
+ * /api/products:
  *   get:
- *     summary: Retrieve all products
- *     description: Fetches all products along with their associated categories, subcategories, and sub-subcategories.
+ *     summary: Get all products
+ *     tags: [Products]
  *     responses:
  *       200:
- *         description: A list of products
+ *         description: List of products
  *         content:
  *           application/json:
  *             schema:
@@ -34,20 +40,204 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Product'
  *       500:
- *         description: Internal server error
+ *         description: Error message if products cannot be fetched
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to get products'
+ *                 error:
+ *                   type: object
  */
 
-router.get('/products',getAllProducts);
-router.get('/products/:id', getProductById);
-router.post('/products',authenticateJWT, upload.single('image'), createProduct);
-router.put('/products/:id', authenticateJWT,upload.single('image'), updateProduct);
-router.delete('/products/:id', authenticateJWT,deleteProduct);
 /**
  * @swagger
- * /products/update-feature-image:
+ * /api/products/{id}:
+ *   get:
+ *     summary: Get a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The product ID
+ *     responses:
+ *       200:
+ *         description: The product details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Product not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Product not found'
+ *       500:
+ *         description: Error message if product cannot be fetched
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to get product'
+ *                 error:
+ *                   type: object
+ */
+
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Create a new product
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       201:
+ *         description: The product was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Bad request if the product data is invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Invalid product data'
+ *                 error:
+ *                   type: object
+ */
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   put:
+ *     summary: Update a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The product ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       200:
+ *         description: The product was successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Product not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Product not found'
+ *       500:
+ *         description: Error message if product cannot be updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to update product'
+ *                 error:
+ *                   type: object
+ */
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Delete a product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The product ID
+ *     responses:
+ *       200:
+ *         description: The product was successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Product not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Product not found'
+ *       400:
+ *         description: Product cannot be deleted due to constraints
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Cannot delete product due to constraints'
+ *       500:
+ *         description: Error message if product cannot be deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to delete product'
+ */
+
+/**
+ * @swagger
+ * /api/products/bulk-featured-update:
  *   patch:
- *     summary: Update feature image status for products
- *     description: Updates the feature image status for a list of products identified by their IDs.
+ *     summary: Update feature image status for one or more products
+ *     tags: [Products]
  *     requestBody:
  *       required: true
  *       content:
@@ -59,29 +249,26 @@ router.delete('/products/:id', authenticateJWT,deleteProduct);
  *                 type: array
  *                 items:
  *                   type: integer
- *                 description: Array of product IDs to update
  *                 example: [1, 2, 3]
- *               featureImage:
+ *                 description: List of product IDs to update
+ *               featured:
  *                 type: boolean
- *                 description: New feature image status to set
  *                 example: true
- *             required:
- *               - ids
- *               - featureImage
+ *                 description: Boolean indicating whether to set the product as featured
  *     responses:
  *       200:
- *         description: Successfully updated feature image status
+ *         description: Successfully updated the feature image for the products and returned the updated product details
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   description: Success message
- *                   example: 'প্রোডাক্টের ফিচার ইমেজ সফলভাবে আপডেট হয়েছে'
+ *                 updatedProducts:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
  *       404:
- *         description: No products found with the provided IDs
+ *         description: No products found for the provided IDs
  *         content:
  *           application/json:
  *             schema:
@@ -89,10 +276,9 @@ router.delete('/products/:id', authenticateJWT,deleteProduct);
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
  *                   example: 'প্রোডাক্ট পাওয়া যায়নি'
  *       500:
- *         description: Failed to update feature image status
+ *         description: Error message if the feature image update fails
  *         content:
  *           application/json:
  *             schema:
@@ -100,17 +286,18 @@ router.delete('/products/:id', authenticateJWT,deleteProduct);
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
  *                   example: 'ফিচার ইমেজ আপডেট করতে ব্যর্থ হয়েছে'
  *                 error:
- *                   type: string
- *                   description: Error details
- *                   example: 'Detailed error message'
+ *                   type: object
+ *                   description: Detailed error information
  */
 
-router.put('/update-feature-image', updateFeatureImage);
-// Route to fetch `enquery` data by product ID
-router.get('/products/:id/enquery', getEnqueryById);
-// Route to update `enquery` data by product ID
-router.put('/products/:id/enquery', updateEnqueryById);
+router.get('/products',getAllProducts);
+router.get('/products/:id', getProductById);
+router.post('/products',authenticateJWT, upload.single('image'), createProduct);
+router.put('/products/:id', authenticateJWT,upload.single('image'), updateProduct);
+router.delete('/products/:id', authenticateJWT,deleteProduct);
+router.patch('/products/bulk-featured-update', updateFeatured);
+// Route to update the featured status of a single product
+router.patch('/product/update-featured', updateSingleFeatured);
 module.exports = router;

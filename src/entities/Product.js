@@ -27,11 +27,7 @@ module.exports = new EntitySchema({
         description: {
             type: 'text',
             nullable: true,
-        },
-        enquery: {
-            type: 'text',
-            nullable: true,
-        },        
+        },       
         color: {
             type: 'varchar',
             nullable: true,
@@ -44,7 +40,7 @@ module.exports = new EntitySchema({
             type: 'varchar',
             nullable: true,
         },
-        featureImage: {
+        featured: {
             type: 'boolean',
             default: false, 
         },        
