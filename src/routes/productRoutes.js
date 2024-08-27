@@ -292,12 +292,79 @@ const router = express.Router();
  *                   description: Detailed error information
  */
 
+/**
+ * @swagger
+ * /api/product/update-featured:
+ *   patch:
+ *     summary: Update featured status for a single product
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 example: 1
+ *                 description: The ID of the product to update
+ *               featured:
+ *                 type: boolean
+ *                 example: true
+ *                 description: Boolean indicating whether to set the product as featured
+ *     responses:
+ *       200:
+ *         description: Successfully updated the featured status of the product and returned the updated product details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 updatedProduct:
+ *                   $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Invalid ID or featured value
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Invalid ID or featured value'
+ *       404:
+ *         description: Product not found for the provided ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Product not found'
+ *       500:
+ *         description: Error message if the update fails
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to update featured status'
+ *                 error:
+ *                   type: object
+ *                   description: Detailed error information
+ */
+
+
 router.get('/products',getAllProducts);
 router.get('/products/:id', getProductById);
 router.post('/products',authenticateJWT, upload.single('image'), createProduct);
 router.put('/products/:id', authenticateJWT,upload.single('image'), updateProduct);
 router.delete('/products/:id', authenticateJWT,deleteProduct);
-router.patch('/products/bulk-featured-update', updateFeatured);
+router.patch('/products/bulk-featured-update',authenticateJWT, updateFeatured);
 // Route to update the featured status of a single product
-router.patch('/product/update-featured', updateSingleFeatured);
+router.patch('/product/update-featured',authenticateJWT, updateSingleFeatured);
 module.exports = router;

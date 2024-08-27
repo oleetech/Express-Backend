@@ -28,14 +28,7 @@ module.exports = new EntitySchema({
             type: 'text',
             nullable: true,
         },       
-        color: {
-            type: 'varchar',
-            nullable: true,
-        },
-        price: {
-            type: 'decimal',
-            nullable: false,
-        },
+
         imageUrl: {
             type: 'varchar',
             nullable: true,

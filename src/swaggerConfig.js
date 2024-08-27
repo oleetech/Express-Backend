@@ -12,6 +12,99 @@ const swaggerOptions = {
         },
         components: {
             schemas: {
+                User: {
+                    type: 'object',
+                    properties: {
+                        id: {
+                            type: 'integer',
+                            description: 'User ID',
+                            example: 1,
+                        },
+                        username: {
+                            type: 'string',
+                            description: 'Username',
+                            example: 'exampleUser',
+                        },
+                        email: {
+                            type: 'string',
+                            description: 'Email address',
+                            example: 'user@example.com',
+                        },
+                        password: {
+                            type: 'string',
+                            description: 'Password',
+                            example: 'securePassword',
+                        },
+                        phone: {
+                            type: 'string',
+                            description: 'Phone number',
+                            example: '1234567890',
+                        },
+                        firstName: {
+                            type: 'string',
+                            description: 'First name',
+                            example: 'John',
+                        },
+                        lastName: {
+                            type: 'string',
+                            description: 'Last name',
+                            example: 'Doe',
+                        },
+                        role: {
+                            type: 'string',
+                            description: 'User role',
+                            example: 'subscriber',
+                        },
+                        isActivated: {
+                            type: 'boolean',
+                            description: 'Account activation status',
+                            example: false,
+                        },
+                        googleId: {
+                            type: 'string',
+                            description: 'Google ID',
+                            example: 'googleId123',
+                        },
+                        facebookId: {
+                            type: 'string',
+                            description: 'Facebook ID',
+                            example: 'facebookId123',
+                        },
+                        otp: {
+                            type: 'string',
+                            description: 'One Time Password',
+                            example: '123456',
+                        },
+                        otpExpires: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'OTP expiration timestamp',
+                            example: '2024-08-25T13:00:00.000Z',
+                        },
+                        activationToken: {
+                            type: 'string',
+                            description: 'Account activation token',
+                            example: 'activationToken123',
+                        },
+                        resetToken: {
+                            type: 'string',
+                            description: 'Password reset token',
+                            example: 'resetToken123',
+                        },
+                        createdAt: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'Creation timestamp',
+                            example: '2024-08-25T13:00:00.000Z',
+                        },
+                        updatedAt: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'Update timestamp',
+                            example: '2024-08-25T13:00:00.000Z',
+                        },
+                    },
+                },
                 Category: {
                     type: 'object',
                     properties: {
@@ -39,8 +132,6 @@ const swaggerOptions = {
                         specification: { type: 'string', description: 'Product specification', example: '6GB RAM, 128GB Storage' },
                         knittingGauge: { type: 'string', description: 'Knitting gauge', example: '20' },
                         description: { type: 'string', description: 'Product description', example: 'A high-quality smartphone' },
-                        color: { type: 'string', description: 'Product color', example: 'Black' },
-                        price: { type: 'number', format: 'float', description: 'Product price', example: 299.99 },
                         imageUrl: { type: 'string', description: 'URL of the product image', example: 'http://example.com/image.jpg' },
                         featured: { type: 'boolean', description: 'Whether this is a feature image', example: false },
                         category_id: { type: 'integer', description: 'Category ID', example: 1 },

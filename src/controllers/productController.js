@@ -33,8 +33,6 @@ const getAllProducts = async (req, res) => {
             specification: product.specification, // প্রোডাক্টের স্পেসিফিকেশন
             knittingGauge: product.knittingGauge, // প্রোডাক্টের ওজন
             description: product.description, // প্রোডাক্টের বর্ণনা
-            color: product.color, // প্রোডাক্টের রং
-            price: product.price, // প্রোডাক্টের দাম
             imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
             featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
@@ -97,8 +95,6 @@ const getProductById = async (req, res) => {
             specification: product.specification, // প্রোডাক্টের স্পেসিফিকেশন
             knittingGauge: product.knittingGauge, // প্রোডাক্টের ওজন
             description: product.description, // প্রোডাক্টের বর্ণনা
-            color: product.color, // প্রোডাক্টের রং
-            price: product.price, // প্রোডাক্টের দাম
             imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
             featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
@@ -138,8 +134,6 @@ const createProduct = async (req, res) => {
             specification, 
             knittingGauge, 
             description, 
-            color, 
-            price, 
             category_id, 
             subcategory_id, 
             subsubcategoryId, 
@@ -176,8 +170,6 @@ const createProduct = async (req, res) => {
             specification,
             knittingGauge,
             description,
-            color,
-            price,
             category,
             subCategory,
             subSubCategory,
@@ -202,8 +194,6 @@ const createProduct = async (req, res) => {
             specification: savedProduct.specification,
             knittingGauge: savedProduct.knittingGauge,
             description: savedProduct.description,
-            color: savedProduct.color,
-            price: savedProduct.price,
             imageUrl: savedProduct.imageUrl,
             featured: savedProduct.featured, 
             enquery: savedProduct.enquery, 
@@ -247,8 +237,6 @@ const updateProduct = async (req, res) => {
             specification, 
             knittingGauge, 
             description, 
-            color, 
-            price, 
             category_id, 
             subcategory_id, 
             subsubcategoryId,  // সাব-সাবক্যাটাগরি আইডি
@@ -294,8 +282,6 @@ const updateProduct = async (req, res) => {
             specification,
             knittingGauge,
             description,
-            color,
-            price,
             category,
             subCategory,
             subSubCategory, // সাব-সাবক্যাটাগরি অন্তর্ভুক্ত করা হচ্ছে
@@ -325,8 +311,6 @@ const updateProduct = async (req, res) => {
             specification: updatedProduct.specification,
             knittingGauge: updatedProduct.knittingGauge,
             description: updatedProduct.description,
-            color: updatedProduct.color,
-            price: updatedProduct.price,
             imageUrl: updatedProduct.imageUrl,
             featured: updatedProduct.featured, // ফিচার ইমেজ স্ট্যাটাস
             enquery: updatedProduct.enquery, // ইনকোয়েরি তথ্য
@@ -447,7 +431,7 @@ const updateFeatured = async (req, res) => {
         console.log('Updated Products:', updatedProducts);
 
         // Respond with updated products
-        res.status(200).json({ updatedProducts });
+        res.status(200).json(updatedProducts );
 
     } catch (error) {
         // Log error

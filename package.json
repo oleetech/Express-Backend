@@ -23,8 +23,11 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
+    "redoc": "^2.1.5",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "twilio": "^5.2.2",
     "typeorm": "^0.3.20"
   },
