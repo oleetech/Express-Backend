@@ -31,7 +31,61 @@ const {
  * @param {object} req - রিকোয়েস্ট অবজেক্ট যা ব্যবহারকারীর ইনপুট ডেটা ধারণ করে।
  * @param {object} res - রেসপন্স অবজেক্ট যা ক্লায়েন্টকে রেসপন্স পাঠাতে ব্যবহৃত হয়।
  * @returns {Promise<void>} - ফাংশনটি একটি প্রমিস রিটার্ন করে যা রিকোয়েস্ট সম্পন্ন হওয়ার পর রেসপন্স প্রদান করে।
+ * 
+ * @example
+ * // Sending registration data via email
+ * POST /api/register
+ * Request Body:
+ * {
+ *   "username": "exampleUser",    // ইউজারের নাম
+ *   "email": "user@example.com",  // ইউজারের ইমেইল
+ *   "password": "securePassword",  // ইউজারের পাসওয়ার্ড
+ *   "phone": "1234567890"         // ইউজারের ফোন নম্বর (ঐচ্ছিক)
+ * }
+ * 
+ * // Response for email registration
+ * Response Body:
+ * {
+ *   "message": "ইমেইল পাঠানো হয়েছে। দয়া করে আপনার ইমেইলে যাচাই সম্পন্ন করুন।"  // ইমেইল যাচাই সংক্রান্ত মেসেজ
+ * }
+ * 
+ * @example
+ * // Sending registration data via phone
+ * POST /api/register
+ * Request Body:
+ * {
+ *   "username": "exampleUser",    // ইউজারের নাম
+ *   "email": "user@example.com",  // ইউজারের ইমেইল (ঐচ্ছিক)
+ *   "password": "securePassword",  // ইউজারের পাসওয়ার্ড
+ *   "phone": "1234567890"         // ইউজারের ফোন নম্বর
+ * }
+ * 
+ * // Response for phone registration
+ * Response Body:
+ * {
+ *   "message": "ফোন নম্বর যাচাইয়ের জন্য কোড পাঠানো হয়েছে।"  // ফোন নম্বর যাচাই সংক্রান্ত মেসেজ
+ * }
+ * 
+ * @example
+ * // Error response if registration fails
+ * POST /api/register
+ * Request Body:
+ * {
+ *   "username": "exampleUser",    // ইউজারের নাম
+ *   "email": "user@example.com",  // ইউজারের ইমেইল (ঐচ্ছিক)
+ *   "password": "securePassword",  // ইউজারের পাসওয়ার্ড
+ *   "phone": "1234567890"         // ইউজারের ফোন নম্বর (ঐচ্ছিক)
+ * }
+ * 
+ * // Error Response Body:
+ * Response Body:
+ * {
+ *   "message": "ব্যবহারকারী নিবন্ধন করতে ত্রুটি",   // ত্রুটির মেসেজ
+ *   "error": "Error details here"                  // ত্রুটির বিস্তারিত
+ * }
  */
+
+
 const register = async (req, res) => {
     // রিকোয়েস্ট বডি থেকে প্যারামিটারগুলো গ্রহণ করা হচ্ছে
     const { username, email, password, phone } = req.body;

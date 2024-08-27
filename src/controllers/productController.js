@@ -14,29 +14,6 @@ const SubSubCategory = require('../entities/SubSubCategory'); // Import the SubS
  * 
  * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা সমস্ত প্রোডাক্ট সংগ্রহের পর রেসপন্স প্রদান করে।
  * 
- * @example JSON রেসপন্স:
- * [
- *   {
- *     "id": 1,                          // প্রোডাক্টের আইডি
- *     "name": "Product Name",           // প্রোডাক্টের নাম
- *     "specification": "Details",       // প্রোডাক্টের স্পেসিফিকেশন
- *     "weight": "500g",                 // প্রোডাক্টের ওজন
- *     "description": "Description",     // প্রোডাক্টের বর্ণনা
- *     "color": "Red",                   // প্রোডাক্টের রং
- *     "price": 100.00,                  // প্রোডাক্টের দাম
- *     "imageUrl": "http://image.url",   // প্রোডাক্টের ইমেজ URL
- *     "featureImage": true,             // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
- *     "enquery": "Some enquery text",    // প্রোডাক্টের ইনকোয়েরি তথ্য
- *     "category_id": 1,                 // প্রোডাক্টের ক্যাটাগরি আইডি
- *     "category_name": "Category",      // প্রোডাক্টের ক্যাটাগরি নাম
- *     "subcategory_id": 2,              // প্রোডাক্টের সাবক্যাটাগরি আইডি
- *     "subcategory_name": "SubCategory",// প্রোডাক্টের সাবক্যাটাগরি নাম
- *     "subsubcategory_id": 3,           // প্রোডাক্টের সাব-সাবক্যাটাগরি আইডি
- *     "subsubcategory_name": "SubSubCategory", // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
- *     "createdAt": "2024-08-25T12:00:00Z",    // প্রোডাক্ট তৈরি হওয়ার সময়
- *     "updatedAt": "2024-08-25T12:00:00Z"     // প্রোডাক্ট আপডেট হওয়ার সময়
- *   }
- * ]
  */
 
 const getAllProducts = async (req, res) => {
@@ -54,7 +31,7 @@ const getAllProducts = async (req, res) => {
             id: product.id, // প্রোডাক্টের আইডি
             name: product.name, // প্রোডাক্টের নাম
             specification: product.specification, // প্রোডাক্টের স্পেসিফিকেশন
-            weight: product.weight, // প্রোডাক্টের ওজন
+            knittingGauge: product.knittingGauge, // প্রোডাক্টের ওজন
             description: product.description, // প্রোডাক্টের বর্ণনা
             color: product.color, // প্রোডাক্টের রং
             price: product.price, // প্রোডাক্টের দাম
@@ -65,8 +42,8 @@ const getAllProducts = async (req, res) => {
             category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
             subcategory_id: product.subCategory ? product.subCategory.id : null, // প্রোডাক্টের সাবক্যাটাগরি আইডি
             subcategory_name: product.subCategory ? product.subCategory.name : null, // প্রোডাক্টের সাবক্যাটাগরি নাম
-            subsubcategory_id: product.subSubCategory ? product.subSubCategory.id : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি আইডি
-            subsubcategory_name: product.subSubCategory ? product.subSubCategory.name : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
+            subSubCategoryId: product.subSubCategory ? product.subSubCategory.id : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি আইডি
+            subSubCategory: product.subSubCategory ? product.subSubCategory.name : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
             createdAt: product.createdAt, // প্রোডাক্ট তৈরি হওয়ার সময়
             updatedAt: product.updatedAt // প্রোডাক্ট আপডেট হওয়ার সময়
         }));
@@ -95,24 +72,6 @@ const getAllProducts = async (req, res) => {
  * 
  * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্ট সংগ্রহের পর রেসপন্স প্রদান করে।
  * 
- * @example JSON রেসপন্স:
- * {
- *   "id": 1,                          // প্রোডাক্টের আইডি
- *   "name": "Product Name",           // প্রোডাক্টের নাম
- *   "specification": "Details",       // প্রোডাক্টের স্পেসিফিকেশন
- *   "weight": "500g",                 // প্রোডাক্টের ওজন
- *   "description": "Description",     // প্রোডাক্টের বর্ণনা
- *   "color": "Red",                   // প্রোডাক্টের রং
- *   "price": 100.00,                  // প্রোডাক্টের দাম
- *   "imageUrl": "http://image.url",   // প্রোডাক্টের ইমেজ URL
- *   "featureImage": true,             // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
- *   "enquery": "Some enquery text",    // প্রোডাক্টের ইনকোয়েরি তথ্য
- *   "category_name": "Category",      // প্রোডাক্টের ক্যাটাগরি নাম
- *   "sub_category_name": "SubCategory",// প্রোডাক্টের সাবক্যাটাগরি নাম
- *   "sub_subcategory_name": "SubSubCategory", // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
- *   "createdAt": "2024-08-25T12:00:00Z",    // প্রোডাক্ট তৈরি হওয়ার সময়
- *   "updatedAt": "2024-08-25T12:00:00Z"     // প্রোডাক্ট আপডেট হওয়ার সময়
- * }
  */
 
 const getProductById = async (req, res) => {
@@ -136,7 +95,7 @@ const getProductById = async (req, res) => {
             id: product.id, // প্রোডাক্টের আইডি
             name: product.name, // প্রোডাক্টের নাম
             specification: product.specification, // প্রোডাক্টের স্পেসিফিকেশন
-            weight: product.weight, // প্রোডাক্টের ওজন
+            knittingGauge: product.knittingGauge, // প্রোডাক্টের ওজন
             description: product.description, // প্রোডাক্টের বর্ণনা
             color: product.color, // প্রোডাক্টের রং
             price: product.price, // প্রোডাক্টের দাম
@@ -145,7 +104,7 @@ const getProductById = async (req, res) => {
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
             category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
             sub_category_name: product.subCategory ? product.subCategory.name : null, // প্রোডাক্টের সাবক্যাটাগরি নাম
-            sub_subcategory_name: product.subSubCategory ? product.subSubCategory.name : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
+            subSubCategory: product.subSubCategory ? product.subSubCategory.name : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
             createdAt: product.createdAt, // প্রোডাক্ট তৈরি হওয়ার সময়
             updatedAt: product.updatedAt // প্রোডাক্ট আপডেট হওয়ার সময়
         });
@@ -168,28 +127,7 @@ const getProductById = async (req, res) => {
  * @param {Object} res - HTTP রেসপন্স অবজেক্ট
  * 
  * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্ট তৈরি হওয়ার পর রেসপন্স প্রদান করে।
- * 
- * @example JSON রেসপন্স:
- * {
- *   "id": 1,                          // প্রোডাক্টের আইডি
- *   "name": "Product Name",           // প্রোডাক্টের নাম
- *   "specification": "Details",       // প্রোডাক্টের স্পেসিফিকেশন
- *   "weight": "500g",                 // প্রোডাক্টের ওজন
- *   "description": "Description",     // প্রোডাক্টের বর্ণনা
- *   "color": "Red",                   // প্রোডাক্টের রং
- *   "price": 100.00,                  // প্রোডাক্টের দাম
- *   "imageUrl": "http://image.url",   // প্রোডাক্টের ইমেজ URL
- *   "featureImage": true,             // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
- *   "enquery": "Some enquery text",   // প্রোডাক্টের ইনকোয়েরি তথ্য
- *   "category_id": 1,                 // প্রোডাক্টের ক্যাটাগরি আইডি
- *   "category_name": "Category",      // প্রোডাক্টের ক্যাটাগরি নাম
- *   "subcategory_id": 2,              // প্রোডাক্টের সাবক্যাটাগরি আইডি
- *   "subcategory_name": "SubCategory",// প্রোডাক্টের সাবক্যাটাগরি নাম
- *   "subsubcategory_id": 3,           // প্রোডাক্টের সাব-সাবক্যাটাগরি আইডি
- *   "subsubcategory_name": "SubSubCategory", // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
- *   "createdAt": "2024-08-25T12:00:00Z",    // প্রোডাক্ট তৈরি হওয়ার সময়
- *   "updatedAt": "2024-08-25T12:00:00Z"     // প্রোডাক্ট আপডেট হওয়ার সময়
- * }
+
  */
 
 const createProduct = async (req, res) => {
@@ -198,13 +136,13 @@ const createProduct = async (req, res) => {
         const { 
             name, 
             specification, 
-            weight, 
+            knittingGauge, 
             description, 
             color, 
             price, 
             category_id, 
             subcategory_id, 
-            subsubcategory_id, 
+            subsubcategoryId, 
             featureImage,   // ফিচার ইমেজ স্ট্যাটাস
             enquery         // ইনকোয়েরি তথ্য
         } = req.body;
@@ -215,7 +153,7 @@ const createProduct = async (req, res) => {
         // ক্যাটাগরি, সাবক্যাটাগরি, এবং সাব-সাবক্যাটাগরি ফেচ করা হচ্ছে
         const category = await AppDataSource.getRepository(Category).findOneBy({ id: category_id });
         const subCategory = await AppDataSource.getRepository(SubCategory).findOneBy({ id: subcategory_id });
-        const subSubCategory = await AppDataSource.getRepository(SubSubCategory).findOneBy({ id: subsubcategory_id });
+        const subSubCategory = await AppDataSource.getRepository(SubSubCategory).findOneBy({ id: subsubcategoryId });
 
         // যদি ক্যাটাগরি পাওয়া না যায়, তাহলে ত্রুটির বার্তা পাঠানো হচ্ছে
         if (!category) {
@@ -228,7 +166,7 @@ const createProduct = async (req, res) => {
         }
 
         // যদি সাব-সাবক্যাটাগরি আইডি উল্লেখ করা হয় এবং তা পাওয়া না যায়
-        if (subsubcategory_id && !subSubCategory) {
+        if (subsubcategoryId && !subSubCategory) {
             return res.status(400).json({ message: 'SubSubCategory not found' });
         }
 
@@ -236,7 +174,7 @@ const createProduct = async (req, res) => {
         const newProduct = await AppDataSource.getRepository(Product).save({
             name,
             specification,
-            weight,
+            knittingGauge,
             description,
             color,
             price,
@@ -262,7 +200,7 @@ const createProduct = async (req, res) => {
             id: savedProduct.id,
             name: savedProduct.name,
             specification: savedProduct.specification,
-            weight: savedProduct.weight,
+            knittingGauge: savedProduct.knittingGauge,
             description: savedProduct.description,
             color: savedProduct.color,
             price: savedProduct.price,
@@ -274,7 +212,7 @@ const createProduct = async (req, res) => {
             subcategory_id: savedProduct.subCategory ? savedProduct.subCategory.id : null,
             subcategory_name: savedProduct.subCategory ? savedProduct.subCategory.name : null,
             subsubcategory_id: savedProduct.subSubCategory ? savedProduct.subSubCategory.id : null, 
-            subsubcategory_name: savedProduct.subSubCategory ? savedProduct.subSubCategory.name : null, 
+            subSubCategory: savedProduct.subSubCategory ? savedProduct.subSubCategory.name : null, 
             createdAt: savedProduct.createdAt,
             updatedAt: savedProduct.updatedAt
         });
@@ -298,27 +236,6 @@ const createProduct = async (req, res) => {
  * 
  * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্ট আপডেট হওয়ার পর রেসপন্স প্রদান করে।
  * 
- * @example JSON রেসপন্স:
- * {
- *   "id": 1,                          // প্রোডাক্টের আইডি
- *   "name": "Updated Product Name",   // আপডেটেড প্রোডাক্টের নাম
- *   "specification": "Updated Details", // আপডেটেড স্পেসিফিকেশন
- *   "weight": "600g",                 // আপডেটেড প্রোডাক্টের ওজন
- *   "description": "Updated Description", // আপডেটেড বর্ণনা
- *   "color": "Blue",                  // আপডেটেড রং
- *   "price": 120.00,                 // আপডেটেড দাম
- *   "imageUrl": "http://image.url",  // আপডেটেড ইমেজ URL
- *   "featureImage": false,           // আপডেটেড ফিচার ইমেজ স্ট্যাটাস
- *   "enquery": "Updated enquery text", // আপডেটেড ইনকোয়েরি তথ্য
- *   "category_id": 1,                // আপডেটেড ক্যাটাগরি আইডি
- *   "category_name": "Updated Category", // আপডেটেড ক্যাটাগরি নাম
- *   "subcategory_id": 2,             // আপডেটেড সাবক্যাটাগরি আইডি
- *   "subcategory_name": "Updated SubCategory", // আপডেটেড সাবক্যাটাগরি নাম
- *   "subsubcategory_id": 3,          // আপডেটেড সাব-সাবক্যাটাগরি আইডি
- *   "subsubcategory_name": "Updated SubSubCategory", // আপডেটেড সাব-সাবক্যাটাগরি নাম
- *   "createdAt": "2024-08-25T12:00:00Z",    // প্রোডাক্ট তৈরি হওয়ার সময়
- *   "updatedAt": "2024-08-25T12:00:00Z"     // প্রোডাক্ট আপডেট হওয়ার সময়
- * }
  */
 
 const updateProduct = async (req, res) => {
@@ -328,15 +245,15 @@ const updateProduct = async (req, res) => {
         const { 
             name, 
             specification, 
-            weight, 
+            knittingGauge, 
             description, 
             color, 
             price, 
             category_id, 
             subcategory_id, 
-            subsubcategory_id,
-            featureImage,   // ফিচার ইমেজ স্ট্যাটাস
-            enquery         // ইনকোয়েরি তথ্য
+            subsubcategoryId,  // সাব-সাবক্যাটাগরি আইডি
+            featureImage,       // ফিচার ইমেজ স্ট্যাটাস
+            enquery             // ইনকোয়েরি তথ্য
         } = req.body;
 
         // বিদ্যমান প্রোডাক্ট ফেচ করা হচ্ছে
@@ -354,7 +271,7 @@ const updateProduct = async (req, res) => {
         // ক্যাটাগরি, সাবক্যাটাগরি, এবং সাব-সাবক্যাটাগরি ফেচ করা হচ্ছে
         const category = await AppDataSource.getRepository(Category).findOneBy({ id: category_id });
         const subCategory = await AppDataSource.getRepository(SubCategory).findOneBy({ id: subcategory_id });
-        const subSubCategory = await AppDataSource.getRepository(SubSubCategory).findOneBy({ id: subsubcategory_id });
+        const subSubCategory = await AppDataSource.getRepository(SubSubCategory).findOneBy({ id: subsubcategoryId });  // সাব-সাবক্যাটাগরি ফেচ
 
         // নিশ্চিত করা হচ্ছে যে, ক্যাটাগরি পাওয়া গেছে
         if (category_id && !category) {
@@ -367,7 +284,7 @@ const updateProduct = async (req, res) => {
         }
 
         // নিশ্চিত করা হচ্ছে যে, সাব-সাবক্যাটাগরি পাওয়া গেছে
-        if (subsubcategory_id && !subSubCategory) {
+        if (subsubcategoryId && !subSubCategory) {  // সাব-সাবক্যাটাগরি চেক করা হচ্ছে
             return res.status(400).json({ message: 'SubSubCategory not found' });
         }
 
@@ -375,7 +292,7 @@ const updateProduct = async (req, res) => {
         const result = await AppDataSource.getRepository(Product).update(id, {
             name,
             specification,
-            weight,
+            knittingGauge,
             description,
             color,
             price,
@@ -406,7 +323,7 @@ const updateProduct = async (req, res) => {
             id: updatedProduct.id,
             name: updatedProduct.name,
             specification: updatedProduct.specification,
-            weight: updatedProduct.weight,
+            knittingGauge: updatedProduct.knittingGauge,
             description: updatedProduct.description,
             color: updatedProduct.color,
             price: updatedProduct.price,
@@ -418,7 +335,7 @@ const updateProduct = async (req, res) => {
             subcategory_id: updatedProduct.subCategory ? updatedProduct.subCategory.id : null,
             subcategory_name: updatedProduct.subCategory ? updatedProduct.subCategory.name : null,
             subsubcategory_id: updatedProduct.subSubCategory ? updatedProduct.subSubCategory.id : null, 
-            subsubcategory_name: updatedProduct.subSubCategory ? updatedProduct.subSubCategory.name : null, 
+            subSubCategory: updatedProduct.subSubCategory ? updatedProduct.subSubCategory.name : null, 
             createdAt: updatedProduct.createdAt,
             updatedAt: updatedProduct.updatedAt
         });
@@ -427,6 +344,7 @@ const updateProduct = async (req, res) => {
         res.status(500).json({ message: 'Failed to update product', error });
     }
 };
+
 
 
 // Delete a product by ID
@@ -442,10 +360,6 @@ const updateProduct = async (req, res) => {
  * 
  * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্ট সফলভাবে মুছে ফেলা হলে রেসপন্স প্রদান করে।
  * 
- * @example JSON রেসপন্স:
- * {
- *   "message": "Product deleted successfully"  // সফল মুছে ফেলার বার্তা
- * }
  */
 
 const deleteProduct = async (req, res) => {
@@ -479,18 +393,6 @@ const deleteProduct = async (req, res) => {
  * @description একটি বা একাধিক প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস আপডেট করে।
  * @access Public
  * 
- * @param {Object} req - HTTP রিকোয়েস্ট অবজেক্ট
- * @param {Object} res - HTTP রেসপন্স অবজেক্ট
- * 
- * @example JSON:
- * {
- *   "ids": [1, 2, 3],       // আপডেট করতে যেসব প্রোডাক্টের আইডি
- *   "featureImage": true    // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস (true বা false)
- * }
- * 
- * @note:
- *   - এই রিকোয়েস্টটি প্রোডাক্ট আইডি 1, 2, এবং 3 এর ফিচার ইমেজ স্ট্যাটাস `true` করবে।
- *   - আপনি `featureImage` এর মান `false` সেট করে ফিচার ইমেজ ডিসেবল করতে পারেন।
  */
 const updateFeatureImage = async (req, res) => {
     try {
@@ -531,12 +433,7 @@ const updateFeatureImage = async (req, res) => {
  * @param {Object} res - HTTP রেসপন্স অবজেক্ট
  * 
  * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্টের `enquery` সফলভাবে ফেচ হলে রেসপন্স প্রদান করে।
- * 
- * @example JSON রেসপন্স:
- * {
- *   "id": 1,                      // প্রোডাক্টের আইডি
- *   "enquery": "Sample enquiry"   // প্রোডাক্টের `enquery` ডাটা
- * }
+
  */
 
 const getEnqueryById = async (req, res) => {
@@ -573,17 +470,7 @@ const getEnqueryById = async (req, res) => {
  * @param {Object} res - HTTP রেসপন্স অবজেক্ট
  * 
  * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্টের `enquery` সফলভাবে আপডেট হলে রেসপন্স প্রদান করে।
- * 
- * @example JSON রিকোয়েস্ট:
- * {
- *   "enquery": "Updated enquiry data"  // নতুন `enquery` ডাটা
- * }
- * 
- * @example JSON রেসপন্স:
- * {
- *   "id": 1,                          // প্রোডাক্টের আইডি
- *   "enquery": "Updated enquiry data"  // আপডেট করা `enquery` ডাটা
- * }
+
  */
 
 const updateEnqueryById = async (req, res) => {

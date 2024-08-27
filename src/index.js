@@ -4,6 +4,7 @@ const authRoutes = require('./routes/authRoutes');
 const authenticateJWT = require('./middlewares/authenticateJWT');
 require('./middlewares/passport-setup'); 
 
+
 require('dotenv').config();
 const cors = require('cors'); // Import the cors package
 
@@ -22,6 +23,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 // Serve static files (e.g., images) from 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 // Test route
 app.get('/', (req, res) => {
@@ -61,6 +64,28 @@ app.use('/api/', productRoutes);
 
 const contactRoutes = require('./routes/contactRoutes'); // Adjust the path if necessary
 app.use('/api', contactRoutes); // Use the contact routes
+
+
+
+
+
+const { setupSwagger, swaggerDocs } = require('./swaggerConfig'); // Import Swagger setup
+
+// Setup Swagger documentation
+setupSwagger(app);
+
+
+// Serve swaggerConfig.json directly
+// Serve swaggerConfig.json
+app.get('/swaggerConfig.json', (req, res) => {
+    res.json(swaggerDocs); // Serve the swagger JSON directly
+});
+
+
+// Serve ReDoc at /redoc
+app.get('/redoc', (req, res) => {
+    res.sendFile(path.join(__dirname, 'redoc.html'));
+});
 
 
 

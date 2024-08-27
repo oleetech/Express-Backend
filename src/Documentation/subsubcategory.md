@@ -143,7 +143,7 @@
 | Parameter     | Type    | Description                            | Required | Example Value      |
 |---------------|---------|----------------------------------------|----------|--------------------|
 | `name`        | string  | The new name for the subsubcategory.   | Yes      | `"Smartphones"`    |
-| `sub_category_id` | int  | The ID of the subcategory to associate with. | Yes      | `2`               |
+| `subCategoryId` | int  | The ID of the subcategory to associate with. | Yes      | `2`               |
 
 ## Response
 
@@ -159,7 +159,7 @@
 {
     "id": 1,
     "name": "Smartphones",
-    "sub_category_id": 2,
+    "subCategoryId": 2,
     "parent_sub_category": "Electronics",
     "createdAt": "2024-08-22T12:00:00Z",
     "updatedAt": "2024-08-23T12:00:00Z"

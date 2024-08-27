@@ -64,12 +64,12 @@ const getSubSubCategoryById = async (req, res) => {
 // Create a new sub-subcategory
 const createSubSubCategory = async (req, res) => {
     try {
-        const { name, sub_category_id } = req.body;
+        const { name, subCategoryId } = req.body;
 
         const subCategoryRepository = AppDataSource.getRepository(SubCategory);
         const existingSubCategory = await subCategoryRepository.findOne({
-            where: { id: sub_category_id },
-            relations: ['category'] // Include the category relation
+            where: { id: subCategoryId },
+            relations: ['category'] 
         });
 
         if (!existingSubCategory) {
@@ -117,10 +117,10 @@ const updateSubSubCategory = async (req, res) => {
             return res.status(404).json({ message: 'SubSubCategory not found' });
         }
 
-        // Update SubCategory if sub_category_id is provided
-        if (req.body.sub_category_id) {
+        // Update SubCategory if subCategoryId is provided
+        if (req.body.subCategoryId) {
             const existingSubCategory = await subCategoryRepository.findOne({
-                where: { id: req.body.sub_category_id },
+                where: { id: req.body.subCategoryId },
                 relations: ['category'] // Include the category relation
             });
 
@@ -131,6 +131,7 @@ const updateSubSubCategory = async (req, res) => {
             subSubCategory.subCategory = existingSubCategory;
         }
 
+        console.log(req.body.subCategoryId, req.body.name)
         // Merge the updated fields
         subSubCategoryRepository.merge(subSubCategory, req.body);
 
