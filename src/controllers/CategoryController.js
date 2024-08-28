@@ -1,8 +1,10 @@
 // controllers/CategoryController.js
 
 const AppDataSource = require('../config/database'); // Import your data source
-const Category = require('../entities/Category'); // Import the Category entity
-const Product = require('../entities/Product'); // Import the Product entity
+const Category = require('../entities/Category');
+const SubCategory = require('../entities/SubCategory');
+const SubSubCategory = require('../entities/SubSubCategory');
+const Product = require('../entities/Product');
 
 // Get all categories
 const getCategories = async (req, res) => {
@@ -28,6 +30,8 @@ const getCategoryById = async (req, res) => {
         res.status(500).json({ message: 'Failed to get category', error });
     }
 };
+
+
 
 // Create a new category
 const createCategory = async (req, res) => {
@@ -92,10 +96,35 @@ const deleteCategory = async (req, res) => {
     }
 };
 
+
+
+
+
+const categoriesData = async (req, res) => {
+    try {
+        // Fetch categories with their associated subcategories
+        const categories = await AppDataSource.getRepository(Category).find({
+            relations: ['subCategories'] // Load subcategories for each category
+        });
+
+        res.status(200).json(categories);
+    } catch (error) {
+        console.error('Error fetching categories:', error); // Log the error
+        res.status(500).json({
+            message: 'Failed to get categories',
+            error: {
+                message: error.message, // Include the error message
+                stack: error.stack // Optionally include stack trace for debugging
+            }
+        });
+    }
+};
+
 module.exports = {
     getCategories,
     getCategoryById,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    categoriesData,
 };

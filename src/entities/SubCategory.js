@@ -26,16 +26,21 @@ module.exports = new EntitySchema({
     },
     relations: {
         category: {
-            type: 'many-to-one', // Many-to-one relationship
-            target: 'Category', // Target entity
+            type: 'many-to-one',
+            target: 'Category',
             joinColumn: {
-                name: 'category_id', // Foreign key column name
+                name: 'category_id',
             },
         },
         products: {
-            type: 'one-to-many', // One-to-many relationship
-            target: 'Product', // Target entity
-            mappedBy: 'subCategory', // Reference field in Product
+            type: 'one-to-many',
+            target: 'Product',
+            mappedBy: 'subCategory',
+        },
+        subSubCategories: {
+            type: 'one-to-many',
+            target: 'SubSubCategory',
+            mappedBy: 'subCategory',
         },
     },
 });

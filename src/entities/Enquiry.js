@@ -1,9 +1,9 @@
-// src/entities/Contact.js
 const { EntitySchema } = require('typeorm');
+const Product = require('./Product'); // Import the Product entity
 
 module.exports = new EntitySchema({
-    name: 'Contact',
-    tableName: 'contacts',
+    name: 'Enquiry',
+    tableName: 'enquiries',
     columns: {
         id: {
             type: 'int',
@@ -30,6 +30,20 @@ module.exports = new EntitySchema({
         createdAt: {
             type: 'timestamp',
             createDate: true,
+        },
+        updatedAt: {
+            type: 'timestamp',
+            updateDate: true,
+        },
+    },
+    relations: {
+        product: {
+            type: 'many-to-one',
+            target: 'Product',
+            joinColumn: {
+                name: 'productId', // This will create the productId column in the enquiries table
+            },
+            nullable: false, // Make sure this is required
         },
     },
 });

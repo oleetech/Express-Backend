@@ -144,6 +144,20 @@ const swaggerOptions = {
                         updatedAt: { type: 'string', format: 'date-time', description: 'Update timestamp', example: '2024-08-25T13:00:00.000Z' },
                     }
                 },
+
+                Enquiry: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'integer', description: 'Enquiry ID', example: 1 },
+                        name: { type: 'string', description: 'Name of the person making the enquiry', example: 'John Doe' },
+                        email: { type: 'string', description: 'Email address of the person making the enquiry', example: 'johndoe@example.com' },
+                        message: { type: 'string', description: 'Message or details provided in the enquiry', example: 'I am interested in learning more about your services.' },
+                        createdAt: { type: 'string', format: 'date-time', description: 'Creation timestamp of the enquiry', example: '2024-08-25T13:00:00.000Z' },
+                        updatedAt: { type: 'string', format: 'date-time', description: 'Update timestamp of the enquiry', example: '2024-08-25T14:00:00.000Z' },
+                        productId: { type: 'integer', description: 'ID of the related product', example: 1 },
+                    }
+                },
+                
             },
         },
     },

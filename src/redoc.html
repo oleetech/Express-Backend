@@ -4,8 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e1e1e1;
+        }
+        .header img {
+            max-width: 200px;
+        }
+        .banner {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            font-size: 1.5em;
+        }
+        #redoc-container {
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
+
+    <div class="header">
+        <img src="https://kreatech.ca/static/media/kr.194b024203dbfbf5ccff.png" alt="Company Logo"> 
+    </div>
+    <div class="banner">
+        Welcome to Our API Documentation
+    </div>
+
     <div id="redoc-container"></div>
     <!-- Load ReDoc -->
     <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>

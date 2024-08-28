@@ -35,6 +35,8 @@ const getAllProducts = async (req, res) => {
             description: product.description, // প্রোডাক্টের বর্ণনা
             imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
             featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
+            other: product.other, // প্রোডাক্টের ইনকোয়েরি তথ্য
+
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
             category_id: product.category ? product.category.id : null, // প্রোডাক্টের ক্যাটাগরি আইডি
             category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
@@ -54,6 +56,7 @@ const getAllProducts = async (req, res) => {
         res.status(500).json({ message: 'Failed to get products', error });
     }
 };
+
 
 
 
@@ -97,6 +100,8 @@ const getProductById = async (req, res) => {
             description: product.description, // প্রোডাক্টের বর্ণনা
             imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
             featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
+            other: product.other, // প্রোডাক্টের ইনকোয়েরি তথ্য
+
             enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
             category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
             sub_category_name: product.subCategory ? product.subCategory.name : null, // প্রোডাক্টের সাবক্যাটাগরি নাম
@@ -138,6 +143,7 @@ const createProduct = async (req, res) => {
             subcategory_id, 
             subsubcategoryId, 
             featured,   // ফিচার ইমেজ স্ট্যাটাস
+            other,
             enquery         // ইনকোয়েরি তথ্য
         } = req.body;
 
@@ -175,6 +181,7 @@ const createProduct = async (req, res) => {
             subSubCategory,
             imageUrl,
             featured, // ফিচার ইমেজ
+            other,
             enquery       // ইনকোয়েরি
         });
 
@@ -196,6 +203,8 @@ const createProduct = async (req, res) => {
             description: savedProduct.description,
             imageUrl: savedProduct.imageUrl,
             featured: savedProduct.featured, 
+            other: savedProduct.other, 
+
             enquery: savedProduct.enquery, 
             category_id: savedProduct.category ? savedProduct.category.id : null,
             category_name: savedProduct.category ? savedProduct.category.name : null,
@@ -241,6 +250,7 @@ const updateProduct = async (req, res) => {
             subcategory_id, 
             subsubcategoryId,  // সাব-সাবক্যাটাগরি আইডি
             featured,       // ফিচার ইমেজ স্ট্যাটাস
+            other,
             enquery             // ইনকোয়েরি তথ্য
         } = req.body;
 
@@ -287,6 +297,7 @@ const updateProduct = async (req, res) => {
             subSubCategory, // সাব-সাবক্যাটাগরি অন্তর্ভুক্ত করা হচ্ছে
             imageUrl,
             featured, // ফিচার ইমেজ স্ট্যাটাস
+            other,
             enquery       // ইনকোয়েরি তথ্য
         });
 
@@ -313,6 +324,7 @@ const updateProduct = async (req, res) => {
             description: updatedProduct.description,
             imageUrl: updatedProduct.imageUrl,
             featured: updatedProduct.featured, // ফিচার ইমেজ স্ট্যাটাস
+            other: updatedProduct.other, 
             enquery: updatedProduct.enquery, // ইনকোয়েরি তথ্য
             category_id: updatedProduct.category ? updatedProduct.category.id : null,
             category_name: updatedProduct.category ? updatedProduct.category.name : null,
@@ -383,7 +395,6 @@ const deleteProduct = async (req, res) => {
 const updateFeatured = async (req, res) => {
     try {
         const { ids, featured } = req.body;
-        console.log(ids, featured);
 
         // Check if ids is an array and is not empty
         if (!Array.isArray(ids) || ids.length === 0) {
@@ -421,17 +432,40 @@ const updateFeatured = async (req, res) => {
             return res.status(404).json({ message: 'No products found for the given IDs' });
         }
 
-        // Fetch the updated products
+        // Fetch the updated products with related categories, subcategories, and subsubcategories
         const updatedProducts = await AppDataSource.getRepository(Product)
             .createQueryBuilder('product')
+            .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.subCategory', 'subCategory')
+            .leftJoinAndSelect('product.subSubCategory', 'subSubCategory')
             .whereInIds(numericIds)
             .getMany();
 
         // Log updated products
         console.log('Updated Products:', updatedProducts);
 
+        // Format response to include related entity names
+        const response = updatedProducts.map(product => ({
+            id: product.id,
+            name: product.name,
+            specification: product.specification,
+            knittingGauge: product.knittingGauge,
+            description: product.description,
+            imageUrl: product.imageUrl,
+            featured: product.featured, // Featured status
+            other: product.other, 
+            category_id: product.category ? product.category.id : null,
+            category_name: product.category ? product.category.name : null,
+            subcategory_id: product.subCategory ? product.subCategory.id : null,
+            subcategory_name: product.subCategory ? product.subCategory.name : null,
+            subsubcategory_id: product.subSubCategory ? product.subSubCategory.id : null, 
+            subsubcategory_name: product.subSubCategory ? product.subSubCategory.name : null, 
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt
+        }));
+
         // Respond with updated products
-        res.status(200).json(updatedProducts );
+        res.status(200).json(response);
 
     } catch (error) {
         // Log error
@@ -439,6 +473,7 @@ const updateFeatured = async (req, res) => {
         res.status(500).json({ message: 'Failed to update featured status', error });
     }
 };
+
 
 
 
@@ -487,7 +522,122 @@ const updateSingleFeatured = async (req, res) => {
 
 
 
+const getAllFeaturedProducts = async (req, res) => {
+    try {
+        // শুধুমাত্র featured ট্রু স্ট্যাটাস সহ প্রোডাক্টগুলি ফেচ করা হচ্ছে
+        const featuredProducts = await AppDataSource.getRepository(Product)
+            .createQueryBuilder('product')
+            .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.subCategory', 'subCategory')
+            .leftJoinAndSelect('product.subSubCategory', 'subSubCategory') // সাব-সাবক্যাটাগরি অন্তর্ভুক্ত করা হচ্ছে
+            .where('product.featured = :featured', { featured: true }) // featured স্ট্যাটাস ট্রু হওয়া প্রোডাক্টগুলি ফিল্টার করা হচ্ছে
+            .getMany();
 
+            console.log('Fetched Featured Products:', featuredProducts);
+
+
+        // প্রতিটি প্রোডাক্টের সাথে সম্পর্কিত ক্যাটাগরি, সাবক্যাটাগরি, এবং সাব-সাবক্যাটাগরি তথ্য ফরম্যাট করা হচ্ছে
+        const formattedProducts = featuredProducts.map(product => ({
+            id: product.id, // প্রোডাক্টের আইডি
+            name: product.name, // প্রোডাক্টের নাম
+            specification: product.specification, // প্রোডাক্টের স্পেসিফিকেশন
+            knittingGauge: product.knittingGauge, // প্রোডাক্টের ওজন
+            description: product.description, // প্রোডাক্টের বর্ণনা
+            imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
+            featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
+            enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
+            category_id: product.category ? product.category.id : null, // প্রোডাক্টের ক্যাটাগরি আইডি
+            category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
+            subcategory_id: product.subCategory ? product.subCategory.id : null, // প্রোডাক্টের সাবক্যাটাগরি আইডি
+            subcategory_name: product.subCategory ? product.subCategory.name : null, // প্রোডাক্টের সাবক্যাটাগরি নাম
+            subSubCategoryId: product.subSubCategory ? product.subSubCategory.id : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি আইডি
+            subSubCategory: product.subSubCategory ? product.subSubCategory.name : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
+            createdAt: product.createdAt, // প্রোডাক্ট তৈরি হওয়ার সময়
+            updatedAt: product.updatedAt // প্রোডাক্ট আপডেট হওয়ার সময়
+        }));
+
+        // ফরম্যাট করা প্রোডাক্টগুলোর তথ্য রেসপন্স হিসাবে পাঠানো হচ্ছে
+        // যদি কোনও featured প্রোডাক্ট না থাকে, তাহলে একটি খালি অ্যারে ফেরত দেওয়া হচ্ছে
+        res.status(200).json(formattedProducts);
+    } catch (error) {
+        // প্রোডাক্ট ফেচ করার সময় কোনো সমস্যা হলে কনসোল এবং রেসপন্সে সেই ত্রুটির তথ্য প্রদর্শন করা হচ্ছে
+        console.error('Error fetching featured products:', error);
+        res.status(500).json({ message: 'Failed to get featured products', error });
+    }
+};
+
+
+/**
+ * প্রোডাক্টের বিভিন্ন ফিল্ড অনুযায়ী সার্চ করার জন্য এই ফাংশনটি ব্যবহৃত হয়।
+ * @function searchProducts
+ * @description এই ফাংশনটি প্রোডাক্টের নাম, স্পেসিফিকেশন, নিটিং গেজ ইত্যাদির উপর ভিত্তি করে প্রোডাক্ট সার্চ করে এবং রেসপন্স হিসাবে রিটার্ন করে।
+ * @route GET /api/products/search
+ * @access Public
+ * 
+ * @param {Object} req - HTTP রিকোয়েস্ট অবজেক্ট
+ * @param {Object} res - HTTP রেসপন্স অবজেক্ট
+ * 
+ * @returns {Promise<void>} - প্রমিস রিটার্ন করে যা প্রোডাক্ট সার্চের পর রেসপন্স প্রদান করে।
+ * 
+ */
+
+const searchProducts = async (req, res) => {
+    try {
+        // সার্চ প্যারামিটার গুলো ফেচ করা হচ্ছে
+        const { name, specification, knittingGauge } = req.query;
+
+        // প্রোডাক্ট সার্চ করার জন্য কুয়েরি বিল্ড করা হচ্ছে
+        const queryBuilder = AppDataSource.getRepository(Product)
+            .createQueryBuilder('product')
+            .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.subCategory', 'subCategory')
+            .leftJoinAndSelect('product.subSubCategory', 'subSubCategory'); // সাব-সাবক্যাটাগরি অন্তর্ভুক্ত করা হচ্ছে
+
+        // যদি নাম প্রোভাইড করা হয়, তাহলে নামের উপর ভিত্তি করে ফিল্টার করা হচ্ছে
+        if (name) {
+            queryBuilder.andWhere('product.name LIKE :name', { name: `%${name}%` });
+        }
+
+        // যদি স্পেসিফিকেশন প্রোভাইড করা হয়, তাহলে স্পেসিফিকেশনের উপর ভিত্তি করে ফিল্টার করা হচ্ছে
+        if (specification) {
+            queryBuilder.andWhere('product.specification LIKE :specification', { specification: `%${specification}%` });
+        }
+
+        // যদি নিটিং গেজ প্রোভাইড করা হয়, তাহলে নিটিং গেজের উপর ভিত্তি করে ফিল্টার করা হচ্ছে
+        if (knittingGauge) {
+            queryBuilder.andWhere('product.knittingGauge LIKE :knittingGauge', { knittingGauge: `%${knittingGauge}%` });
+        }
+
+        // প্রোডাক্ট গুলো সার্চ করে রিটার্ন করা হচ্ছে
+        const products = await queryBuilder.getMany();
+
+        // প্রোডাক্ট গুলো ফরম্যাট করা হচ্ছে
+        const formattedProducts = products.map(product => ({
+            id: product.id, // প্রোডাক্টের আইডি
+            name: product.name, // প্রোডাক্টের নাম
+            specification: product.specification, // প্রোডাক্টের স্পেসিফিকেশন
+            knittingGauge: product.knittingGauge, // প্রোডাক্টের নিটিং গেজ
+            description: product.description, // প্রোডাক্টের বর্ণনা
+            imageUrl: product.imageUrl, // প্রোডাক্টের ইমেজ URL
+            featured: product.featured, // প্রোডাক্টের ফিচার ইমেজ স্ট্যাটাস
+            enquery: product.enquery, // প্রোডাক্টের ইনকোয়েরি তথ্য
+            category_id: product.category ? product.category.id : null, // প্রোডাক্টের ক্যাটাগরি আইডি
+            category_name: product.category ? product.category.name : null, // প্রোডাক্টের ক্যাটাগরি নাম
+            subcategory_id: product.subCategory ? product.subCategory.id : null, // প্রোডাক্টের সাবক্যাটাগরি আইডি
+            subcategory_name: product.subCategory ? product.subCategory.name : null, // প্রোডাক্টের সাবক্যাটাগরি নাম
+            subSubCategoryId: product.subSubCategory ? product.subSubCategory.id : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি আইডি
+            subSubCategory: product.subSubCategory ? product.subSubCategory.name : null, // প্রোডাক্টের সাব-সাবক্যাটাগরি নাম
+            createdAt: product.createdAt, // প্রোডাক্ট তৈরি হওয়ার সময়
+            updatedAt: product.updatedAt // প্রোডাক্ট আপডেট হওয়ার সময়
+        }));
+
+        // রেসপন্সে ফরম্যাট করা প্রোডাক্ট গুলো পাঠানো হচ্ছে
+        res.status(200).json(formattedProducts);
+    } catch (error) {
+        // প্রোডাক্ট সার্চ করার সময় কোনো সমস্যা হলে কনসোল এবং রেসপন্সে সেই ত্রুটির তথ্য প্রদর্শন করা হচ্ছে
+        res.status(500).json({ message: 'Failed to search products', error });
+    }
+};
 
 
 module.exports = {
@@ -497,5 +647,7 @@ module.exports = {
     updateProduct,
     deleteProduct,
     updateFeatured,
-    updateSingleFeatured
+    updateSingleFeatured,
+    getAllFeaturedProducts,
+    searchProducts,
 };

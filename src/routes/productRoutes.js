@@ -10,6 +10,8 @@ const {
     deleteProduct,
     updateFeatured,
     updateSingleFeatured,
+    getAllFeaturedProducts,
+    searchProducts,
      
 } = require('../controllers/productController'); // Adjust the path as necessary
 
@@ -358,13 +360,154 @@ const router = express.Router();
  *                   description: Detailed error information
  */
 
+/**
+ * @swagger
+ * /api/products/featured:
+ *   get:
+ *     summary: Get all featured products
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: List of featured products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *       500:
+ *         description: Error message if featured products cannot be fetched
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to get featured products'
+ *                 error:
+ *                   type: object
+ */
+
+/**
+ * @swagger
+ * /api/products-search:
+ *   get:
+ *     summary: Search for products based on various criteria  
+
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Search by product name example http://127.0.0.1:3000/api/products-search?name=ad
+ *       - in: query
+ *         name: specification
+ *         schema:
+ *           type: string
+ *         description: Search by product specification
+ *       - in: query
+ *         name: knittingGauge
+ *         schema:
+ *           type: string
+ *         description: Search by product knitting gauge
+ *     responses:
+ *       200:
+ *         description: List of products matching the search criteria
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: The product ID
+ *                   name:
+ *                     type: string
+ *                     description: The product name
+ *                   specification:
+ *                     type: string
+ *                     description: The product specification
+ *                   knittingGauge:
+ *                     type: string
+ *                     description: The product knitting gauge
+ *                   description:
+ *                     type: string
+ *                     description: The product description
+ *                   imageUrl:
+ *                     type: string
+ *                     description: URL of the product image
+ *                   featured:
+ *                     type: boolean
+ *                     description: Whether the product is featured
+ *                   enquery:
+ *                     type: string
+ *                     description: Enquiry information related to the product
+ *                   category_id:
+ *                     type: integer
+ *                     description: The ID of the product's category
+ *                   category_name:
+ *                     type: string
+ *                     description: The name of the product's category
+ *                   subcategory_id:
+ *                     type: integer
+ *                     description: The ID of the product's subcategory
+ *                   subcategory_name:
+ *                     type: string
+ *                     description: The name of the product's subcategory
+ *                   subSubCategoryId:
+ *                     type: integer
+ *                     description: The ID of the product's sub-subcategory
+ *                   subSubCategory:
+ *                     type: string
+ *                     description: The name of the product's sub-subcategory
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The date and time when the product was created
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The date and time when the product was last updated
+ *       404:
+ *         description: No products found matching the search criteria
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'No products found'
+ *       500:
+ *         description: Error message if search operation fails
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to search products'
+ *                 error:
+ *                   type: object
+ */
+
+
 
 router.get('/products',getAllProducts);
+router.get('/products/featured',getAllFeaturedProducts);
+
 router.get('/products/:id', getProductById);
 router.post('/products',authenticateJWT, upload.single('image'), createProduct);
 router.put('/products/:id', authenticateJWT,upload.single('image'), updateProduct);
 router.delete('/products/:id', authenticateJWT,deleteProduct);
 router.patch('/products/bulk-featured-update',authenticateJWT, updateFeatured);
-// Route to update the featured status of a single product
 router.patch('/product/update-featured',authenticateJWT, updateSingleFeatured);
+router.get('/products-search',searchProducts);
+
+
 module.exports = router;

@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 });
 
 // Auth Routes setup
-app.use('/auth', authRoutes);
+app.use('/api', authRoutes);
 
 // Upload middleware setup
 const upload = require('./middlewares/uploadMiddleware');
@@ -66,7 +66,9 @@ const contactRoutes = require('./routes/contactRoutes'); // Adjust the path if n
 app.use('/api', contactRoutes); // Use the contact routes
 
 
-
+// Use the enquiries routes in your main application file
+const enquiryRoutes = require('./routes/enquiryRoutes'); // Adjust the path as necessary
+app.use('/api/', enquiryRoutes);
 
 
 const { setupSwagger, swaggerDocs } = require('./swaggerConfig'); // Import Swagger setup
@@ -86,6 +88,7 @@ app.get('/swaggerConfig.json', (req, res) => {
 app.get('/redoc', (req, res) => {
     res.sendFile(path.join(__dirname, 'redoc.html'));
 });
+
 
 
 

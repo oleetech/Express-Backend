@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "typeorm": "typeorm -d src/config/database.js",
+    "migration:generate": "typeorm migration:generate -d src/config/database.js -n",
+    "migration:run": "typeorm migration:run -d src/config/database.js",
+    "migration:revert": "typeorm migration:revert -d src/config/database.js"
   },
   "keywords": [],
   "author": "",

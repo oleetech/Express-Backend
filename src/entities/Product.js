@@ -36,7 +36,13 @@ module.exports = new EntitySchema({
         featured: {
             type: 'boolean',
             default: false, 
-        },        
+        },     
+        
+        other: {
+            type: 'varchar',
+            nullable: true,
+        },
+
         createdAt: {
             type: 'timestamp',
             createDate: true,

@@ -1,26 +1,26 @@
 const { EntitySchema } = require('typeorm');
-const SubCategory = require('./SubCategory');
+const SubCategory = require('./SubCategory'); // Import SubCategory entity
 
 module.exports = new EntitySchema({
-    name: 'SubSubCategory',
-    tableName: 'sub_sub_categories',
+    name: 'SubSubCategory', // Entity name
+    tableName: 'sub_sub_categories', // Table name for SQL databases
     columns: {
         id: {
-            type: 'int',
-            primary: true,
-            generated: true,
+            type: 'int', // SQL databases use 'int' for IDs
+            primary: true, // Primary key
+            generated: true, // Auto-increment for primary key
         },
         name: {
-            type: 'varchar',
-            nullable: false,
+            type: 'varchar', // Column type for name
+            nullable: false, // Cannot be null
         },
         createdAt: {
-            type: 'timestamp',
-            createDate: true,
+            type: 'timestamp', // Use 'timestamp' for creation date
+            createDate: true, // Automatically set creation date
         },
         updatedAt: {
-            type: 'timestamp',
-            updateDate: true,
+            type: 'timestamp', // Use 'timestamp' for update date
+            updateDate: true, // Automatically set update date
         },
     },
     relations: {

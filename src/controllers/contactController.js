@@ -15,7 +15,8 @@ const createContact = async (req, res) => {
         const newContact = await AppDataSource.getRepository(Contact).save({
             name,
             email,
-            message
+            message,
+            status: false  // Set default status to 'non_replied'
         });
 
         res.status(201).json({
@@ -23,12 +24,15 @@ const createContact = async (req, res) => {
             name: newContact.name,
             email: newContact.email,
             message: newContact.message,
+            status: newContact.status,  // Include status in the response
             createdAt: newContact.createdAt
         });
     } catch (error) {
         res.status(500).json({ message: 'Failed to create contact submission', error });
     }
 };
+
+
 
 // Get all contact submissions
 const getAllContacts = async (req, res) => {
@@ -39,6 +43,7 @@ const getAllContacts = async (req, res) => {
         res.status(500).json({ message: 'Failed to get contacts', error });
     }
 };
+
 
 // Get a single contact submission by ID
 const getContactById = async (req, res) => {
@@ -55,15 +60,16 @@ const getContactById = async (req, res) => {
     }
 };
 
-// Update a contact submission
+
+
 const updateContact = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, message } = req.body;
+        const { status } = req.body;
 
-        // Validate input fields
-        if (!name || !email || !message) {
-            return res.status(400).json({ message: 'Name, email, and message are required' });
+        // Validate status field
+        if (typeof status !== 'boolean') {
+            return res.status(400).json({ message: 'A valid boolean status is required' });
         }
 
         const contactRepository = AppDataSource.getRepository(Contact);
@@ -73,9 +79,8 @@ const updateContact = async (req, res) => {
             return res.status(404).json({ message: 'Contact not found' });
         }
 
-        contact.name = name;
-        contact.email = email;
-        contact.message = message;
+        // Update only the status field
+        contact.status = status;
 
         const updatedContact = await contactRepository.save(contact);
         res.status(200).json(updatedContact);
@@ -83,6 +88,7 @@ const updateContact = async (req, res) => {
         res.status(500).json({ message: 'Failed to update contact', error });
     }
 };
+
 
 // Delete a contact submission
 const deleteContact = async (req, res) => {

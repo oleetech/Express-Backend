@@ -168,8 +168,8 @@ const {
 /**
  * @swagger
  * /api/contacts/{id}:
- *   put:
- *     summary: Update a contact submission by ID
+ *   patch:
+ *     summary: Update the status of a contact submission by ID
  *     tags: [Contacts]
  *     parameters:
  *       - in: path
@@ -185,21 +185,13 @@ const {
  *           schema:
  *             type: object
  *             properties:
- *               name:
- *                 type: string
- *                 example: 'John Doe'
- *                 description: Name of the contact
- *               email:
- *                 type: string
- *                 example: 'john.doe@example.com'
- *                 description: Email address of the contact
- *               message:
- *                 type: string
- *                 example: 'This is an updated message.'
- *                 description: Updated message content from the contact
+ *               status:
+ *                 type: boolean
+ *                 example: true
+ *                 description: The new status of the contact submission (true for replied, false for non_replied)
  *     responses:
  *       200:
- *         description: Successfully updated the contact submission
+ *         description: Successfully updated the contact submission status
  *         content:
  *           application/json:
  *             schema:
@@ -208,15 +200,9 @@ const {
  *                 id:
  *                   type: integer
  *                   example: 1
- *                 name:
- *                   type: string
- *                   example: 'John Doe'
- *                 email:
- *                   type: string
- *                   example: 'john.doe@example.com'
- *                 message:
- *                   type: string
- *                   example: 'This is an updated message.'
+ *                 status:
+ *                   type: boolean
+ *                   example: true
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -230,7 +216,7 @@ const {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: 'Name, email, and message are required'
+ *                   example: 'A valid boolean status is required'
  *       404:
  *         description: Contact not found
  *         content:
@@ -255,6 +241,7 @@ const {
  *                   type: object
  *                   description: Detailed error information
  */
+
 
 /**
  * @swagger
@@ -326,7 +313,7 @@ const {
 router.get('/contacts', getAllContacts);
 router.get('/contacts/:id', getContactById);
 router.post('/contacts', createContact);
-router.put('/contacts/:id', updateContact);
+router.patch('/contacts/:id', updateContact);
 router.delete('/contacts/:id', deleteContact);
 
 module.exports = router;

@@ -8,7 +8,8 @@ const {
     getCategoryById,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    categoriesData,
 } = require('../controllers/CategoryController');
 
 const router = express.Router();
@@ -216,6 +217,9 @@ const router = express.Router();
  *                   example: 'Failed to delete category'
  */
 router.get('/categories', getCategories);
+router.get('/categoriesData', categoriesData);
+
+
 router.get('/categories/:id', getCategoryById);
 router.post('/categories',authenticateJWT, createCategory);
 router.put('/categories/:id', authenticateJWT,updateCategory);
