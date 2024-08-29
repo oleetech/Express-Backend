@@ -34,6 +34,9 @@ app.get('/', (req, res) => {
 // Auth Routes setup
 app.use('/api', authRoutes);
 
+const permissionRoutes = require('./routes/permissionRoutes');
+app.use('/api', permissionRoutes);
+
 // Upload middleware setup
 const upload = require('./middlewares/uploadMiddleware');
 // Route: Single file upload
@@ -99,6 +102,7 @@ const port = process.env.PORT || 3000;
 AppDataSource.initialize()
     .then(() => {
         console.log('Database connected successfully!');
+        
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
         });

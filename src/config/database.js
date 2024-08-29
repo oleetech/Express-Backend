@@ -1,17 +1,8 @@
+// config/database.js
 require('reflect-metadata');
-require('dotenv').config(); // Load environment variables
-
 const { DataSource } = require('typeorm');
 const path = require('path');
-
-// Import your entities here
-const User = require('../entities/User'); 
-const Product = require('../entities/Product');
-const Category = require('../entities/Category');
-const SubCategory = require('../entities/SubCategory');
-const SubSubCategory = require('../entities/SubSubCategory');
-const Contact = require('../entities/Contact');
-const Enquiry = require('../entities/Enquiry');
+const { User, Product, Category, SubCategory, SubSubCategory, Contact, Enquiry, Role, Permission, UserGroup } = require('../entities');
 
 // MySQL-specific configuration
 const AppDataSource = new DataSource({
@@ -23,19 +14,11 @@ const AppDataSource = new DataSource({
     database: process.env.DB_DATABASE || 'passportjs_example',
     synchronize: process.env.DB_SYNCHRONIZE === 'true', // Synchronize schema - set to 'false' for production
     logging: process.env.DB_LOGGING === 'true', // Enable query logging
-    entities: [
-        User, 
-        Product, 
-        Category, 
-        SubCategory,
-        SubSubCategory,
-        Contact,
-        Enquiry
-    ], // Add your entities here
+    entities: [User, Product, Category, SubCategory, SubSubCategory, Contact, Enquiry, Role, Permission, UserGroup], // Include all entities
+
     migrations: [
         path.join(__dirname, 'migrations/*.js'), // Path to your migration files
     ],
 });
 
-// Export the data source for use in other parts of your application
 module.exports = AppDataSource;
