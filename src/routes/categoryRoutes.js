@@ -9,7 +9,7 @@ const {
     createCategory,
     updateCategory,
     deleteCategory,
-    categoriesData,
+    getAllCategories,
 } = require('../controllers/CategoryController');
 
 const router = express.Router();
@@ -216,8 +216,70 @@ const router = express.Router();
  *                   type: string
  *                   example: 'Failed to delete category'
  */
+
+
+/**
+ * @swagger
+ * /api/categories/getAllCategories:
+ *   get:
+ *     summary: Retrieve a list of all categories along with their subcategories and sub-subcategories
+ *     tags: [Categories]
+ *     responses:
+ *       200:
+ *         description: A list of categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: The category ID
+ *                   name:
+ *                     type: string
+ *                     description: The category name
+ *                   subCategories:
+ *                     type: array
+ *                     description: A list of subcategories belonging to the category
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                           description: The subcategory ID
+ *                         name:
+ *                           type: string
+ *                           description: The subcategory name
+ *                         subSubCategories:
+ *                           type: array
+ *                           description: A list of sub-subcategories belonging to the subcategory
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: integer
+ *                                 description: The sub-subcategory ID
+ *                               name:
+ *                                 type: string
+ *                                 description: The sub-subcategory name
+ *       500:
+ *         description: Error message if categories cannot be retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to get categories'
+ *                 error:
+ *                   type: string
+ *                   example: 'Detailed error message'
+ */
 router.get('/categories', getCategories);
-router.get('/categoriesData', categoriesData);
+router.get('/getAllCategories', getAllCategories);
 
 
 router.get('/categories/:id', getCategoryById);

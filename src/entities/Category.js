@@ -26,13 +26,12 @@ module.exports = new EntitySchema({
         subCategories: {
             type: 'one-to-many',
             target: 'SubCategory',
-            mappedBy: 'category',
+            inverseSide: 'category', // Use inverseSide instead of mappedBy
         },
         products: {
             type: 'one-to-many',
             target: 'Product',
-            mappedBy: 'category',
+            inverseSide: 'category', // Use inverseSide instead of mappedBy
         },
     },
 });
-

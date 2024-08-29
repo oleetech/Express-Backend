@@ -16,6 +16,9 @@ const getCategories = async (req, res) => {
     }
 };
 
+
+
+
 // Get a single category by ID
 const getCategoryById = async (req, res) => {
     try {
@@ -100,25 +103,40 @@ const deleteCategory = async (req, res) => {
 
 
 
-const categoriesData = async (req, res) => {
+const getAllCategories = async (req, res) => {
     try {
-        // Fetch categories with their associated subcategories
         const categories = await AppDataSource.getRepository(Category).find({
-            relations: ['subCategories'] // Load subcategories for each category
+            relations: ['subCategories', 'subCategories.subSubCategories'],
         });
 
-        res.status(200).json(categories);
+        if (!categories || categories.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const formattedCategories = categories.map(category => ({
+            id: category.id,
+            name: category.name,
+            subCategories: category.subCategories.map(subCategory => ({
+                id: subCategory.id,
+                name: subCategory.name,
+                subSubCategories: subCategory.subSubCategories.map(subSubCategory => ({
+                    id: subSubCategory.id,
+                    name: subSubCategory.name,
+                }))
+            })),
+        }));
+
+        res.status(200).json(formattedCategories);
+
     } catch (error) {
-        console.error('Error fetching categories:', error); // Log the error
         res.status(500).json({
             message: 'Failed to get categories',
-            error: {
-                message: error.message, // Include the error message
-                stack: error.stack // Optionally include stack trace for debugging
-            }
+            error: error.message || error,
         });
     }
 };
+
+
 
 module.exports = {
     getCategories,
@@ -126,5 +144,5 @@ module.exports = {
     createCategory,
     updateCategory,
     deleteCategory,
-    categoriesData,
+    getAllCategories,
 };

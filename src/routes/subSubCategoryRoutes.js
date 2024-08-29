@@ -272,7 +272,7 @@ const authenticateJWT = require('../middlewares/authenticateJWT'); // Import the
 // Routes for sub-subcategory CRUD operations
 router.get('/subsubcategories', subSubCategoryController.getAllSubSubCategories);
 router.get('/subsubcategories/:id', subSubCategoryController.getSubSubCategoryById);
-router.post('/subsubcategories', authenticateJWT, subSubCategoryController.createSubSubCategory);
+router.post('/subsubcategories', subSubCategoryController.createSubSubCategory);
 router.put('/subsubcategories/:id', authenticateJWT, subSubCategoryController.updateSubSubCategory);
 router.delete('/subsubcategories/:id', authenticateJWT, subSubCategoryController.deleteSubSubCategory);
 

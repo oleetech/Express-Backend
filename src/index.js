@@ -104,6 +104,6 @@ AppDataSource.initialize()
         });
     })
     .catch((err) => {
-        console.error('Error during database connection:', err);
+        console.error('Error during database connection:', err.message || err);
         console.log('Server is running without a database connection.');
     });
